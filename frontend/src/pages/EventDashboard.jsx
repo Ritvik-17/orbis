@@ -368,13 +368,13 @@ const EventDashboard = () => {
 
     return (
         <>
-            <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto pt-32 pb-16 px-4 sm:px-6 lg:px-8">
                 <div className="text-center">
                     <h1 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">{event.name}</h1>
                     <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">{event.tagline}</p>
                 </div>
 
-                <div className="sticky top-16 px-6 py-4 mt-8 flex justify-center items-center space-x-4 w-auto">
+                <div className="sticky top-24 z-10 bg-white/80 backdrop-blur-sm px-6 py-4 mt-8 flex justify-center items-center space-x-4 w-auto">
                     <nav className="flex space-x-4">
                         <button
                             className={`px-4 py-2 rounded-lg transition ${

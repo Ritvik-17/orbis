@@ -410,8 +410,8 @@ const Home = () => {
         <DecorativeSVGs />
 
         {/* Main Content */}
-        <div className="container-width relative z-10">
-          <div className="max-w-6xl mx-auto pt-28 md:pt-40 px-4">
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-6xl mx-auto pt-32 px-4">
             <div className="text-center space-y-4 md:space-y-6">
               <h1 className="text-[42px] sm:text-[50px] md:text-[110px] leading-tight md:leading-none tracking-tight">
                 <span className="text-black font-normal">create.</span>

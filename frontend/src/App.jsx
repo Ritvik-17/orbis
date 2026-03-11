@@ -14,8 +14,11 @@ import EventDetails from './pages/EventDetails';
 import EditEvent from './components/EditEvent';
 import ApplyForm from "./pages/ApplyForEvent";  // Import the component
 import { NavigationProvider } from './contexts/NavigationContext';
+import { ChatProvider } from './contexts/ChatContext';
 import OrganiserDashboard from './pages/OrganiserDashboard.jsx';
 import EventDashboard from './pages/EventDashboard.jsx';
+import Community from './pages/Community.jsx';
+import Inbox from './pages/Inbox.jsx';
 
 const ProtectedRoute = ({ children, requiredRole }) => {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -54,14 +57,24 @@ const App = () => {
         cacheLocation="localstorage"
       >
         <AuthProvider>
-          <div className="App min-h-screen flex flex-col">
-            <Navbar />
+          <ChatProvider>
+            <div className="App min-h-screen flex flex-col">
+              <Navbar />
             <main className="flex-grow">
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/events" element={<Events />} />
+                <Route path="/community" element={<Community />} />
+                <Route 
+                  path="/inbox" 
+                  element={
+                    <ProtectedRoute>
+                      <Inbox />
+                    </ProtectedRoute>
+                  } 
+                />
                 <Route 
                   path="/create-event" 
                   element={
@@ -88,6 +101,14 @@ const App = () => {
                   } 
                 />
                 <Route 
+                  path="/profile/:id" 
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
                   path="/edit-profile" 
                   element={
                     <ProtectedRoute>
@@ -102,6 +123,7 @@ const App = () => {
             </main>
             <Footer />
           </div>
+          </ChatProvider>
         </AuthProvider>
       </Auth0Provider>
       </NavigationProvider>

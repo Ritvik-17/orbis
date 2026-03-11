@@ -262,4 +262,80 @@ export const profileAPI = {
     api.put('/api/profile', profileData)
 };
 
+// Posts API endpoints
+export const postsAPI = {
+  getPosts: async (page = 1, limit = 10) => {
+    const response = await api.get(`/api/posts?page=${page}&limit=${limit}`);
+    return response.data;
+  },
+  createPost: async (postData) => {
+    const response = await api.post('/api/posts', postData);
+    return response.data;
+  },
+  reactToPost: async (postId, type) => {
+    const response = await api.post(`/api/posts/${postId}/react`, { type });
+    return response.data;
+  },
+  addComment: async (postId, commentData) => {
+    const response = await api.post(`/api/posts/${postId}/comment`, commentData);
+    return response.data;
+  },
+  getComments: async (postId) => {
+    const response = await api.get(`/api/posts/${postId}/comments`);
+    return response.data;
+  },
+  getUserProfile: async (userId) => {
+    const response = await api.get(`/api/posts/user/${userId}`);
+    return response.data;
+  }
+};
+
+// Friends API endpoints
+export const friendsAPI = {
+  getFriends: async () => {
+    const response = await api.get('/api/friends');
+    return response.data;
+  },
+  getPendingRequests: async () => {
+    const response = await api.get('/api/friends/requests/pending');
+    return response.data;
+  },
+  searchUsers: async (query) => {
+    const response = await api.get(`/api/friends/search?query=${query}`);
+    return response.data;
+  },
+  sendRequest: async (receiverId) => {
+    const response = await api.post('/api/friends/request', { receiverId });
+    return response.data;
+  },
+  followOrganizer: async (organizerId) => {
+    const response = await api.post('/api/friends/follow', { organizerId });
+    return response.data;
+  },
+  respondToRequest: async (requestId, action) => {
+    const response = await api.post(`/api/friends/request/${requestId}`, { action });
+    return response.data;
+  },
+  followOrganizer: async (organizerId) => {
+    const response = await api.post('/api/friends/follow', { organizerId });
+    return response.data;
+  }
+};
+
+// Messages API endpoints
+export const messagesAPI = {
+  getInbox: async () => {
+    const response = await api.get('/api/messages/inbox');
+    return response.data;
+  },
+  getConversation: async (conversationId) => {
+    const response = await api.get(`/api/messages/${conversationId}`);
+    return response.data;
+  },
+  sendMessage: async (messageData) => {
+    const response = await api.post('/api/messages', messageData);
+    return response.data;
+  }
+};
+
 export default api;

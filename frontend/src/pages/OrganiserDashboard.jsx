@@ -128,7 +128,7 @@ const OrganiserDashboard = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-16">
+    <div className="container mx-auto px-4 pt-32 pb-16">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Your Events</h1>
       </div>
