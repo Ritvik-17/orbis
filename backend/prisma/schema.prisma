@@ -3,27 +3,47 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DIRECT_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id             String              @id @default(cuid())
-  email          String              @unique
-  username       String              @unique
-  role           UserRole            @default(ORGANIZER)
-  status         UserStatus          @default(ACTIVE)
-  createdAt      DateTime            @default(now())
-  updatedAt      DateTime            @updatedAt
-  auth0Id        String              @unique
+  id             String             @id @default(cuid())
+  auth0Id        String             @unique
+  email          String             @unique
+  username       String             @unique
+  role           UserRole           @default(ORGANIZER)
+  status         UserStatus         @default(ACTIVE)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  profile        UserProfile?
+  education      UserEducation[]
+  experience     UserExperience[]
+  skills         UserSkill[]
+  socialProfiles UserSocialProfile[]
+<<<<<<< HEAD
   applications   Application[]
   createdEvents  Event[]
   teamMembers    TeamMember[]
-  education      UserEducation[]
-  experience     UserExperience[]
-  profile        UserProfile?
-  skills         UserSkill[]
-  socialProfiles UserSocialProfile[]
+  comments       Comment[]
+  clubId         Int?               @unique
+  club           Club?              @relation("ClubConvener", fields: [clubId], references: [id])
+=======
+
+  // Community Module Relations
+  posts            Post[]
+  reactions        Reaction[]
+  comments         Comment[]
+  friendships      Friendship[]         @relation("UserFriendships")
+  friendOf         Friendship[]         @relation("FriendUser")
+  sentRequests     FriendRequest[]      @relation("SentRequests")
+  receivedRequests FriendRequest[]      @relation("ReceivedRequests")
+  followers        Follow[]             @relation("UserFollowers")
+  following        Follow[]             @relation("UserFollowing")
+  conversations    ConversationMember[]
+  messages         Message[]
+>>>>>>> community-module
 }
 
 model UserProfile {
@@ -48,9 +68,8 @@ model UserEducation {
   institutionName String
   fieldOfStudy    String
   graduationYear  Int?
-  createdAt       DateTime @default(now())
-  degree          String
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserExperience {
@@ -82,8 +101,46 @@ model UserSocialProfile {
   user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Club {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  logoUrl     String?
+  createdAt   DateTime  @default(now())
+  convener    User?     @relation("ClubConvener")
+  projects    Project[]
+}
+
+model Project {
+  id           Int       @id @default(autoincrement())
+  clubId       Int
+  title        String
+  description  String
+  githubUrl    String?
+  demoUrl      String?
+  contributors String[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  club         Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  comments     Comment[]
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  projectId Int
+  userId    String
+  content   String
+  parentId  Int?
+  createdAt DateTime  @default(now())
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id])
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentReplies")
+}
+
 model Event {
-  id              Int                 @id @default(autoincrement())
+<<<<<<< HEAD
+  id              Int               @id @default(autoincrement())
   name            String
   type            EventType
   tagline         String?
@@ -91,23 +148,51 @@ model Event {
   maxParticipants Int?
   minTeamSize     Int?
   maxTeamSize     Int?
-  createdAt       DateTime            @default(now())
+  mode            EventMode         @default(ONLINE)
+  status          EventStatus       @default(DRAFT)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
   createdById     String
-  mode            EventMode           @default(ONLINE)
-  status          EventStatus         @default(DRAFT)
-  updatedAt       DateTime            @updatedAt
+  createdBy       User              @relation(fields: [createdById], references: [id])
+  timeline        EventTimeline?
+  links           EventLink?
+  branding        EventBranding?
+  tracks          Track[]
+  sponsors        Sponsor[]
+  eventPeople     EventPerson[]
   applications    Application[]
   applicationForm ApplicationForm?
   customQuestions CustomQuestion[]
-  createdBy       User                @relation(fields: [createdById], references: [id])
-  branding        EventBranding?
-  links           EventLink?
-  eventPeople     EventPerson[]
-  timeline        EventTimeline?
-  projects        ProjectSubmission[]
-  sponsors        Sponsor[]
   teams           Team[]
-  tracks          Track[]
+  projects        ProjectSubmission[]
+=======
+  id                Int                 @id @default(autoincrement())
+  name              String
+  type              EventType
+  tagline           String?
+  about             String?
+  maxParticipants   Int?
+  minTeamSize       Int?
+  maxTeamSize       Int?
+  mode              EventMode          @default(ONLINE)
+  status            EventStatus        @default(DRAFT)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  createdById       String
+  createdBy         User               @relation(fields: [createdById], references: [id])
+  timeline          EventTimeline?
+  links             EventLink?
+  branding          EventBranding?
+  tracks            Track[]
+  sponsors          Sponsor[]
+  eventPeople       EventPerson[]
+  applications      Application[]
+  applicationForm   ApplicationForm?
+  customQuestions   CustomQuestion[]
+  teams             Team[]
+  projects          ProjectSubmission[]
+  posts             Post[]              // For event invite cards embedded in posts
+>>>>>>> community-module
 }
 
 model ApplicationForm {
@@ -134,10 +219,10 @@ model CustomQuestion {
 model EventTimeline {
   id                     Int       @id @default(autoincrement())
   eventId                Int       @unique
-  applicationsStart      DateTime?
-  applicationsEnd        DateTime?
   eventStart             DateTime
   eventEnd               DateTime
+  applicationsStart      DateTime?
+  applicationsEnd        DateTime?
   rsvpDaysBeforeDeadline Int?
   event                  Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
@@ -155,9 +240,9 @@ model EventLink {
 model EventBranding {
   id         Int     @id @default(autoincrement())
   eventId    Int     @unique
-  brandColor String?
-  coverUrl   String?
   logoUrl    String?
+  coverUrl   String?
+  brandColor String?
   event      Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
@@ -184,8 +269,8 @@ model Sponsor {
   eventId    Int
   name       String
   logoUrl    String?
-  tier       SponsorTier
   websiteUrl String?
+  tier       SponsorTier
   event      Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
@@ -204,8 +289,10 @@ model Team {
   id           Int                 @id @default(autoincrement())
   eventId      Int
   name         String
-  createdAt    DateTime            @default(now())
-  hashCode     String              @unique
+  hashCode     String             @unique
+  createdAt    DateTime           @default(now())
+  event        Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  members      TeamMember[]
   applications Application[]
   projects     ProjectSubmission[]
   event        Event               @relation(fields: [eventId], references: [id], onDelete: Cascade)
@@ -222,17 +309,18 @@ model TeamMember {
 }
 
 model Application {
-  id        Int               @id @default(autoincrement())
-  eventId   Int
-  userId    String
-  teamId    Int?
-  status    ApplicationStatus
-  createdAt DateTime          @default(now())
-  responses Json
-  userData  Json
-  event     Event             @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  team      Team?             @relation(fields: [teamId], references: [id])
-  user      User              @relation(fields: [userId], references: [id])
+  id         Int               @id @default(autoincrement())
+  eventId    Int
+  userId     String
+  teamId     Int?
+  status     ApplicationStatus
+  createdAt  DateTime          @default(now())
+  attendance Boolean           @default(false)
+  userData   Json
+  responses  Json
+  event      Event             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user       User              @relation(fields: [userId], references: [id])
+  team       Team?             @relation(fields: [teamId], references: [id])
 }
 
 model ProjectSubmission {
@@ -298,9 +386,12 @@ model Response {
   @@map("responses")
 }
 
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
 enum UserRole {
   ADMIN
   ORGANIZER
+  CONVENER
 }
 
 enum UserStatus {
@@ -368,6 +459,164 @@ enum EventPersonRole {
 enum TeamMemberRole {
   LEADER
   MEMBER
+}
+
+// ==========================================
+// Community Module Models
+// ==========================================
+
+model Post {
+  id        String      @id @default(cuid())
+  content   String      @db.Text
+  authorId  String
+  eventId   Int?        // Optional event link for invites
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  author    User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  event     Event?      @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  images    PostImage[]
+  tags      PostTag[]
+  reactions Reaction[]
+  comments  Comment[]
+}
+
+model PostImage {
+  id        String   @id @default(cuid())
+  postId    String
+  url       String
+  createdAt DateTime @default(now())
+
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Tag {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  posts     PostTag[]
+}
+
+model PostTag {
+  postId    String
+  tagId     String
+
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag       Tag       @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+}
+
+model Reaction {
+  id        String       @id @default(cuid())
+  postId    String
+  userId    String
+  type      ReactionType
+  createdAt DateTime     @default(now())
+
+  post      Post         @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId]) // User can only react once per post
+}
+
+model Comment {
+  id              String    @id @default(cuid())
+  content         String    @db.Text
+  postId          String
+  userId          String
+  parentCommentId String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  post            Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parentComment   Comment?  @relation("ThreadedComments", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  replies         Comment[] @relation("ThreadedComments")
+}
+
+model FriendRequest {
+  id         String               @id @default(cuid())
+  senderId   String
+  receiverId String
+  status     FriendRequestStatus  @default(PENDING)
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+
+  sender     User                 @relation("SentRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User                 @relation("ReceivedRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId])
+}
+
+model Friendship {
+  id        String   @id @default(cuid())
+  userId    String
+  friendId  String
+  createdAt DateTime @default(now())
+
+  user      User     @relation("UserFriendships", fields: [userId], references: [id], onDelete: Cascade)
+  friend    User     @relation("FriendUser", fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, friendId])
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower    User     @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+}
+
+model Conversation {
+  id        String               @id @default(cuid())
+  isGroup   Boolean              @default(false)
+  name      String?              // Optional for groups
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+
+  members   ConversationMember[]
+  messages  Message[]
+}
+
+model ConversationMember {
+  id             String       @id @default(cuid())
+  conversationId String
+  userId         String
+  joinedAt       DateTime     @default(now())
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  senderId       String
+  content        String       @db.Text
+  isRead         Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+enum ReactionType {
+  LIKE
+  CELEBRATE
+  SUPPORT
+}
+
+enum FriendRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }
 
 enum QuestionType {

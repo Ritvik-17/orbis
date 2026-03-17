@@ -12,22 +12,20 @@ import {
   publishEvent,
   getAutoSave,
   getApplication,
-  updateApplication
+  updateApplication,
+  updateAttendance
 } from '../controllers/events.js';
-import { validate, eventSchema , eventDraftSchema} from '../middleware/validate.js';
+import { validate, eventSchema, eventDraftSchema } from '../middleware/validate.js';
 
 const router = express.Router();
 
 // Protected Organizer only route
 router.get('/autosave', checkJwt, ensureUser, isOrganizer, getAutoSave);
 
-
 // Public routes
 router.get('/', getEvents);
 router.get('/:id', getEventById);
 router.get('/:eventId/custom-questions', getCustomQuestions);
-
-
 
 // Protected routes
 router.use(checkJwt);
@@ -39,14 +37,15 @@ router.post('/draft', isOrganizer, validate(eventDraftSchema), createEvent);
 router.put('/:id', isOrganizer, updateEvent);
 router.delete('/:id', isOrganizer, deleteEvent);
 
-
-// Participant routes (require complete profile)
+// Participant routes
 router.post('/:id/apply', checkJwt, ensureUser, requireCompleteProfile, applyToEvent);
 router.post('/:id/join', joinEvent);
 
 // Application routes
-router.get('/:eventId/application', checkJwt, ensureUser, getApplication)
-//router.delete('/application/:id', deleteApplication)
-router.put('/:eventId/application', checkJwt, ensureUser, updateApplication)
+router.get('/:eventId/application', checkJwt, ensureUser, getApplication);
+router.put('/:eventId/application', checkJwt, ensureUser, updateApplication);
 
-export default router; 
+// Attendance route            
+router.patch('/:id/attendance', updateAttendance);
+
+export default router;

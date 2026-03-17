@@ -14,9 +14,17 @@ import EventDetails from './pages/EventDetails';
 import EditEvent from './components/EditEvent';
 import ApplyForm from "./pages/ApplyForEvent";  // Import the component
 import { NavigationProvider } from './contexts/NavigationContext';
+import { ChatProvider } from './contexts/ChatContext';
 import OrganiserDashboard from './pages/OrganiserDashboard.jsx';
 import Forms from "./pages/forms/Forms.jsx"
 import EventDashboard from './pages/EventDashboard.jsx';
+<<<<<<< HEAD
+import ProjectShowcase from './pages/ProjectShowcase';
+import ClubProjects from './pages/ClubProjects';
+=======
+import Community from './pages/Community.jsx';
+import Inbox from './pages/Inbox.jsx';
+>>>>>>> community-module
 import CreateForm from "./pages/forms/CreateForm"
 import FormView from "./pages/forms/FormView";
 import Responses from "./pages/forms/Responses";
@@ -58,14 +66,24 @@ const App = () => {
         cacheLocation="localstorage"
       >
         <AuthProvider>
-          <div className="App min-h-screen flex flex-col">
-            <Navbar />
+          <ChatProvider>
+            <div className="App min-h-screen flex flex-col">
+              <Navbar />
             <main className="flex-grow">
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/events" element={<Events />} />
+                <Route path="/community" element={<Community />} />
+                <Route 
+                  path="/inbox" 
+                  element={
+                    <ProtectedRoute>
+                      <Inbox />
+                    </ProtectedRoute>
+                  } 
+                />
                 <Route 
                   path="/create-event" 
                   element={
@@ -92,6 +110,14 @@ const App = () => {
                   } 
                 />
                 <Route 
+                  path="/profile/:id" 
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
                   path="/edit-profile" 
                   element={
                     <ProtectedRoute>
@@ -102,6 +128,8 @@ const App = () => {
                 <Route path="/events/:id/apply" element={<ApplyForm />} />  {/* NEW ROUTE */}
                 <Route path="/org-dashboard" element={<OrganiserDashboard />} />
                 <Route path="/event-dashboard/:id" element={<EventDashboard />} />
+                <Route path="/projects" element={<ProjectShowcase />} />
+                <Route path="/projects/:id" element={<ClubProjects />} />
                 {/* Routes for forms */}
                 
                 <Route path="/forms" element={<Forms/>} />
@@ -112,6 +140,7 @@ const App = () => {
             </main>
             <Footer />
           </div>
+          </ChatProvider>
         </AuthProvider>
       </Auth0Provider>
       </NavigationProvider>

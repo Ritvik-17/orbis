@@ -74,15 +74,28 @@ const Navbar = () => {
             <Link to="/events" className="text-sm text-gray-500 hover:text-black transition-colors tracking-wide">
               Events
             </Link>
+            <Link to="/community" className="text-sm text-gray-500 hover:text-black transition-colors tracking-wide">
+              Community
+            </Link>
+            {isAuthenticated && (
+              <Link to="/inbox" className="text-sm text-gray-500 hover:text-black transition-colors tracking-wide">
+                Inbox
+              </Link>
+            )}
             <Link to="/forms" className="text-sm text-gray-500 hover:text-black transition-colors tracking-wide">
               Forms
             </Link>
             <a href="/#testimonials" className="text-sm text-gray-500 hover:text-black transition-colors tracking-wide">
               Testimonials
             </a>
-            {isAuthenticated && <Link to="/org-dashboard" className="text-sm text-gray-500 hover:text-black transition-colors tracking-wide">
-              Organiser Dashboard
-            </Link>}
+            <Link to="/projects" className="text-sm text-gray-500 hover:text-black transition-colors tracking-wide">
+              Projects
+            </Link>
+            {isAuthenticated && (
+              <Link to="/org-dashboard" className="text-sm text-gray-500 hover:text-black transition-colors tracking-wide">
+                Organiser Dashboard
+              </Link>
+            )}
           </div>
 
           {/* Desktop Auth Buttons */}
@@ -122,6 +135,22 @@ const Navbar = () => {
               >
                 Events
               </Link>
+              <Link 
+                to="/community" 
+                className="text-lg text-gray-500 hover:text-black transition-colors px-4 py-2 rounded-lg hover:bg-gray-50"
+                onClick={() => handleMobileMenuClick()}
+              >
+                Community
+              </Link>
+              {isAuthenticated && (
+                <Link 
+                  to="/inbox" 
+                  className="text-lg text-gray-500 hover:text-black transition-colors px-4 py-2 rounded-lg hover:bg-gray-50"
+                  onClick={() => handleMobileMenuClick()}
+                >
+                  Inbox
+                </Link>
+              )}
               <a 
                 href="/#testimonials" 
                 className="text-lg text-gray-500 hover:text-black transition-colors px-4 py-2 rounded-lg hover:bg-gray-50"
@@ -129,6 +158,13 @@ const Navbar = () => {
               >
                 Testimonials
               </a>
+              <Link
+                to="/projects"
+                className="text-lg text-gray-500 hover:text-black transition-colors px-4 py-2 rounded-lg hover:bg-gray-50"
+                onClick={() => handleMobileMenuClick()}
+              >
+                Projects
+              </Link>
               
               <div className="pt-6 border-t mt-4">
                 {isAuthenticated && (
@@ -160,4 +196,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

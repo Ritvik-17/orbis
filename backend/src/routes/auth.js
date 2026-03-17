@@ -9,6 +9,7 @@ router.post('/register', register);
 
 // Protected routes
 router.get('/user', checkJwt, getCurrentUser);
+router.get('/me', checkJwt, getCurrentUser);
 router.put('/user', checkJwt, updateUser);
 
 export default router; 
