@@ -74,6 +74,9 @@ const Navbar = () => {
             <Link to="/events" className="text-sm text-gray-500 hover:text-black transition-colors tracking-wide">
               Events
             </Link>
+            <Link to="/events" className="text-sm text-gray-500 hover:text-black transition-colors tracking-wide">
+              Forms
+            </Link>
             <a href="/#testimonials" className="text-sm text-gray-500 hover:text-black transition-colors tracking-wide">
               Testimonials
             </a>

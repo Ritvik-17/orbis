@@ -10,7 +10,7 @@ const Register = () => {
   const [role, setRole] = useState('PARTICIPANT');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { loginWithRedirect, isAuthenticated } = useAuth0();
+  const { user,loginWithRedirect, isAuthenticated } = useAuth0();
   const [email, setEmail] = useState(user.email);
   // const { register } = useAuth();
 

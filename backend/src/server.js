@@ -8,7 +8,21 @@ import { errorHandler } from './middleware/error.js';
 const app = express();
 
 // Security middleware
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        connectSrc: [
+          "'self'",
+          "http://localhost:4000",
+          "https://*.supabase.co",
+          "https://wec-auth.us.auth0.com",
+        ],
+      },
+    },
+  })
+);
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true,

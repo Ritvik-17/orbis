@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DIRECT_URL")
 }
 
 model User {
@@ -320,3 +320,67 @@ enum TeamMemberRole {
   LEADER
   MEMBER
 }
+
+
+
+enum QuestionType {
+  TEXT
+  MCQ
+  MULTIPLE_CHOICE
+  CHECKBOXES
+  DROPDOWNS
+  STAR_RATINGS
+
+  @@map("question_type")
+}
+
+model Form {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String?
+  description String
+  createdBy   String?      @map("created_by")
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  
+  questions   Question[]
+  submissions Submission[]
+
+  @@map("forms")
+}
+
+model Question {
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  formId       String?       @map("form_id") @db.Uuid
+  questionText String        @default("") @map("question_text")
+  questionType QuestionType? @map("question_type")
+  
+  form      Form?       @relation(fields: [formId], references: [id])
+  responses Response[]
+
+  @@map("questions")
+}
+
+model Submission {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  formId    String?    @map("form_id") @db.Uuid
+  
+  form      Form?      @relation(fields: [formId], references: [id])
+  responses Response[]
+
+  @@map("submissions")
+}
+
+model Response {
+  id           BigInt      @id @default(autoincrement())
+  createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  submissionId String?     @map("submission_id") @db.Uuid
+  questionId   String?     @map("question_id") @db.Uuid
+  answer       String?     @default("")
+  
+  submission Submission? @relation(fields: [submissionId], references: [id])
+  question   Question?   @relation(fields: [questionId], references: [id])
+
+  @@map("responses")
+}
+

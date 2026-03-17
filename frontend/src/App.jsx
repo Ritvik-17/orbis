@@ -15,7 +15,11 @@ import EditEvent from './components/EditEvent';
 import ApplyForm from "./pages/ApplyForEvent";  // Import the component
 import { NavigationProvider } from './contexts/NavigationContext';
 import OrganiserDashboard from './pages/OrganiserDashboard.jsx';
+import Forms from "./pages/forms/Forms.jsx"
 import EventDashboard from './pages/EventDashboard.jsx';
+import CreateForm from "./pages/forms/CreateForm"
+import FormView from "./pages/forms/FormView";
+import Responses from "./pages/forms/Responses";
 
 const ProtectedRoute = ({ children, requiredRole }) => {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -98,6 +102,12 @@ const App = () => {
                 <Route path="/events/:id/apply" element={<ApplyForm />} />  {/* NEW ROUTE */}
                 <Route path="/org-dashboard" element={<OrganiserDashboard />} />
                 <Route path="/event-dashboard/:id" element={<EventDashboard />} />
+                {/* Routes for forms */}
+                
+                <Route path="/forms" element={<Forms/>} />
+                <Route path="/create" element={<CreateForm />} />
+                <Route path="/forms/:id" element={<FormView />} />
+                <Route path="/responses/:formId" element={<Responses />} />
               </Routes>
             </main>
             <Footer />
