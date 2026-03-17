@@ -1,4 +1,5 @@
 import prisma from '../config/database.js';
+//import { createNotification } from "../utils/notification.js";
 
 export const createEvent = async (req, res) => {
   try {
@@ -20,9 +21,9 @@ export const createEvent = async (req, res) => {
     }
 
     // delete previous autosave
-    if(req.body.id){
-      const eventDelete = await prisma.event.delete({
-        where : { id : req.body.id}
+    if (req.body.id) {
+      await prisma.event.delete({
+        where: { id: req.body.id }
       });
     }
 
@@ -43,7 +44,7 @@ export const createEvent = async (req, res) => {
         mode: eventData.mode,
         status: eventData.status || 'PUBLISHED',
         createdById: user.id,
-        
+
         timeline: {
           create: {
             eventStart: eventData.eventTimeline.eventStart,
@@ -53,15 +54,15 @@ export const createEvent = async (req, res) => {
             rsvpDaysBeforeDeadline: parseInt(eventData.eventTimeline.rsvpDaysBeforeDeadline)
           }
         },
-        
+
         branding: {
           create: {
-            logoUrl: eventData.eventBranding.logoImage || null, 
+            logoUrl: eventData.eventBranding.logoImage || null,
             coverUrl: eventData.eventBranding.coverImage || null,
             brandColor: eventData.eventBranding.brandColor || '#000000'
           }
         },
-        
+
         links: {
           create: {
             websiteUrl: eventData.eventLinks[0].websiteUrl || null,
@@ -70,7 +71,7 @@ export const createEvent = async (req, res) => {
             socialLinks: eventData.eventLinks[0].socialLinks || {}
           }
         },
-        
+
         tracks: {
           create: eventData.tracks.map(track => ({
             name: track.name,
@@ -84,22 +85,22 @@ export const createEvent = async (req, res) => {
             }
           }))
         },
-        
+
         sponsors: {
           create: eventData.sponsors.map(sponsor => ({
             name: sponsor.name,
             websiteUrl: sponsor.websiteUrl || '',
             logoUrl: sponsor.logoUrl || null,
-            tier: sponsor.tier || 'GOLD'  // Assuming GOLD is a valid tier in your schema
+            tier: sponsor.tier || 'GOLD'
           }))
         },
-        
+
         eventPeople: {
           create: eventData.eventPeople.map(person => ({
             name: person.name,
             role: person.role || 'JUDGE',
-            imageUrl: person.avatar || null,     
-            description: person.bio || null,     
+            imageUrl: person.avatar || null,
+            description: person.bio || null,
             socialLinks: person.socialLinks || null
           }))
         },
@@ -161,7 +162,10 @@ export const getEvents = async (req, res) => {
         applicationForm: true,
         applications: {
           include: {
-            team: true // Include team details in response
+            team: true,
+            user: {
+            select: { username: true }
+            }
           }
         },
         customQuestions: true,
@@ -188,7 +192,7 @@ export const getEvents = async (req, res) => {
 export const getEventById = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const event = await prisma.event.findUnique({
       where: { id: parseInt(id) },
       include: {
@@ -206,7 +210,7 @@ export const getEventById = async (req, res) => {
         applicationForm: true,
         applications: {
           include: {
-            team: true // Include team details in response
+            team: true
           }
         },
         createdBy: {
@@ -235,8 +239,8 @@ export const getCustomQuestions = async (req, res) => {
     const { eventId } = req.params; // Extract eventId from URL
 
     const questions = await prisma.customQuestion.findMany({
-      where: { eventId: parseInt(eventId) }, // Filter by eventId
-      select: { 
+      where: { eventId: parseInt(eventId) },
+      select: {
         questionText: true,
         questionType: true,
         options: true,
@@ -244,7 +248,7 @@ export const getCustomQuestions = async (req, res) => {
       }
     });
 
-    res.json(questions); // Return questions as JSON
+    res.json(questions);
   } catch (error) {
     console.error("Error fetching questions:", error);
     res.status(500).json({ error: "Failed to fetch questions" });
@@ -253,9 +257,8 @@ export const getCustomQuestions = async (req, res) => {
 
 export const getAutoSave = async (req, res) => {
   try {
-
     const userId = req.user.id;
-    
+
     const event = await prisma.event.findFirst({
       where: {
         AND: [
@@ -372,7 +375,7 @@ export const updateEvent = async (req, res) => {
         minTeamSize: updateData.minTeamSize,
         maxTeamSize: updateData.maxTeamSize,
         mode: updateData.mode,
-        status: updateData.status || event.status, // Keep existing status if not specified
+        status: updateData.status || event.status,
 
         timeline: {
           update: {
@@ -521,9 +524,9 @@ export const deleteEvent = async (req, res) => {
 
 export const joinEvent = async (req, res) => {
   // ... existing joinEvent code ...
+  // If you want me to paste the full joinEvent implementation here, tell me and I'll include it.
 };
 
-// Add the missing applyToEvent function
 export const applyToEvent = async (req, res) => {
   try {
     console.log("Received request body:", req.body);
@@ -544,109 +547,102 @@ export const applyToEvent = async (req, res) => {
     let existingTeam;
 
     // Check if the team already exists using the hashCode
-    if(mode === 'create'){
-        existingTeam = await prisma.team.findUnique({
-        where: { 
+    if (mode === 'create') {
+      existingTeam = await prisma.team.findUnique({
+        where: {
           hashCode: team.hash
         }
-       });
+      });
 
-        if (!existingTeam) {
-          // If the team doesn't exist, create it
-          existingTeam = await prisma.team.create({
-            data: {
-              eventId: parseInt(eventId),
-              name: team.name,
-              hashCode: team.hash,
-            }
-          });
-        } else {
-          return res.status(500).json({ error: 'Generate a new hash.' }); //Incase hash is already in use
-        }
-
-
-        // Add the user as a member of the team if not already a member
-        const existingTeamMember = await prisma.teamMember.findFirst({
-          where: {
-            teamId: existingTeam.id,
-            userId: user.id
+      if (!existingTeam) {
+        // If the team doesn't exist, create it
+        existingTeam = await prisma.team.create({
+          data: {
+            eventId: parseInt(eventId),
+            name: team.name,
+            hashCode: team.hash,
           }
         });
+      } else {
+        return res.status(500).json({ error: 'Generate a new hash.' }); //Incase hash is already in use
+      }
 
-        if (!existingTeamMember) {
-          await prisma.teamMember.create({
-            data: {
-              teamId: existingTeam.id,
-              userId: user.id,
-              role: 'LEADER' // Set default role, change as needed
-            }
-          });
-        } else {
-          return res.status(500).json({ error: 'Already in the team' });
+      // Add the user as a member of the team if not already a member
+      const existingTeamMember = await prisma.teamMember.findFirst({
+        where: {
+          teamId: existingTeam.id,
+          userId: user.id
         }
-    } else if (mode === 'join'){
-        existingTeam = await prisma.team.findUnique({
-        where: { 
-          hashCode: team.hash,
-          eventId: parseInt(eventId) 
-        }
-        });
+      });
 
-        if (!existingTeam) {
-          // If the team user is trying to join does not exist, send error
-          return res.status(500).json({ error: 'Team does not exist' });
-        }
-
-        let presentInTeam = await prisma.teamMember.count({
-          where : {
-            teamId: existingTeam.id,
-            userId: user.id
-          }
-        });
-
-        //If user is already part of the team
-        if(presentInTeam > 0){
-          return res.status(500).json({ error: 'Registrant is already a part of the team.' });
-        }
-
-        let maxTeamSize = await prisma.event.findUnique({
-          where : {id : parseInt(eventId)},
-          select: { maxTeamSize: true } 
-        });
-
-        let currentTeamSize = await prisma.teamMember.count({
-          where : { teamId: existingTeam.id}
-        });
-
-        //to check for maximum allowed participants in a team
-        if(currentTeamSize === maxTeamSize.maxTeamSize){
-          return res.status(500).json({ error: 'Team is at maximum capacity' });
-        }
-
+      if (!existingTeamMember) {
         await prisma.teamMember.create({
           data: {
             teamId: existingTeam.id,
             userId: user.id,
-            role: 'MEMBER' // Set default role, change as needed
+            role: 'LEADER'
           }
         });
+      } else {
+        return res.status(500).json({ error: 'Already in the team' });
+      }
+    } else if (mode === 'join') {
+      existingTeam = await prisma.team.findUnique({
+        where: {
+          hashCode: team.hash,
+          eventId: parseInt(eventId)
+        }
+      });
 
+      if (!existingTeam) {
+        return res.status(500).json({ error: 'Team does not exist' });
+      }
+
+      let presentInTeam = await prisma.teamMember.count({
+        where: {
+          teamId: existingTeam.id,
+          userId: user.id
+        }
+      });
+
+      if (presentInTeam > 0) {
+        return res.status(500).json({ error: 'Registrant is already a part of the team.' });
+      }
+
+      let maxTeamSize = await prisma.event.findUnique({
+        where: { id: parseInt(eventId) },
+        select: { maxTeamSize: true }
+      });
+
+      let currentTeamSize = await prisma.teamMember.count({
+        where: { teamId: existingTeam.id }
+      });
+
+      if (currentTeamSize === maxTeamSize.maxTeamSize) {
+        return res.status(500).json({ error: 'Team is at maximum capacity' });
+      }
+
+      await prisma.teamMember.create({
+        data: {
+          teamId: existingTeam.id,
+          userId: user.id,
+          role: 'MEMBER'
+        }
+      });
     }
-
-
 
     // Create application with team reference
     const application = await prisma.application.create({
       data: {
         eventId: parseInt(eventId),
         userId: user.id,
-        teamId: existingTeam.id, // Link application to team
+        teamId: existingTeam.id,
         status: 'PENDING',
         userData: userData,
         responses: responses || {}
       },
       include: {
-        team: true // Include team details in response
+        team: true
       }
     });
 
@@ -656,7 +652,6 @@ export const applyToEvent = async (req, res) => {
     res.status(500).json({ error: 'Failed to submit application' });
   }
 };
-
 
 export const publishEvent = async (req, res) => {
   try {
@@ -720,7 +715,7 @@ export const publishEvent = async (req, res) => {
 export const getApplication = async (req, res) => {
   try {
     // Extract user ID from Auth0 token
-    const auth0Id = req.auth.payload.sub; 
+    const auth0Id = req.auth.payload.sub;
     const eventId = parseInt(req.params.eventId, 10);
 
     if (!auth0Id) {
@@ -733,25 +728,23 @@ export const getApplication = async (req, res) => {
 
     const user = await prisma.user.findUnique({
       where: { auth0Id },
-      select: { id: true }, // Only fetch the user ID
+      select: { id: true },
     });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Fetch the specific application related to the user and event
     const application = await prisma.application.findFirst({
       where: {
-        userId: user.id, 
-        eventId, 
+        userId: user.id,
+        eventId,
       },
       include: {
         event: true,
         team: true,
       },
     });
-
 
     if (!application) {
       return res.status(200).json({ error: "Application not found for this user and event" });
@@ -762,7 +755,7 @@ export const getApplication = async (req, res) => {
     console.error("Error fetching application:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
 
 export const updateApplication = async (req, res) => {
   try {
@@ -778,7 +771,7 @@ export const updateApplication = async (req, res) => {
     if (isNaN(eventId)) {
       return res.status(400).json({ error: "Invalid event ID" });
     }
-    
+
     // Find the application belonging to the user and event
     const application = await prisma.application.findFirst({
       where: {
@@ -787,7 +780,7 @@ export const updateApplication = async (req, res) => {
       },
     });
 
-    console.log(application)
+    console.log(application);
 
     if (!application) {
       return res.status(404).json({ error: "Application not found" });
@@ -803,11 +796,54 @@ export const updateApplication = async (req, res) => {
       },
     });
 
+    // 🔔 Trigger notification if status changed to ACCEPTED or REJECTED
+    if (status === "ACCEPTED") {
+      try {
+        await createNotification({
+          userId: updatedApplication.userId,
+          title: "Application Approved 🎉",
+          message: "Congratulations! Your application has been accepted.",
+          type: "APPLICATION",
+        });
+      } catch (notifErr) {
+        console.error("Failed to create ACCEPTED notification:", notifErr);
+        // don't fail the request if notification fails
+      }
+    }
+
+    if (status === "REJECTED") {
+      try {
+        await createNotification({
+          userId: updatedApplication.userId,
+          title: "Application Update",
+          message: "Your application was not selected this time.",
+          type: "APPLICATION",
+        });
+      } catch (notifErr) {
+        console.error("Failed to create REJECTED notification:", notifErr);
+      }
+    }
+
     res.status(200).json(updatedApplication);
   } catch (error) {
     console.error("Error updating application:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
+};
+// PATCH /api/events/:id/attendance
+export const updateAttendance = async (req, res) => {
+    const { applicationId, attendance } = req.body;
+    
+    try {
+        const updated = await prisma.application.update({
+            where: { id: applicationId },
+            data: { attendance }
+        });
+        res.json(updated);
+    } catch (err) {
+        console.error('Error updating attendance:', err);
+        res.status(500).json({ error: 'Failed to update attendance' });
+    }
 };
 
 // export const deleteApplication = async (req, res) => {

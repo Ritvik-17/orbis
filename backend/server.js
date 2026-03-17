@@ -12,6 +12,7 @@ import eventRoutes from './src/routes/events.js';
 import teamRoutes from './src/routes/teams.js';
 import projectRoutes from './src/routes/projects.js';
 import profileRoutes from './src/routes/profiles.js';
+import clubRoutes from './src/routes/clubs.js';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -20,7 +21,7 @@ const PORT = process.env.PORT || 4000;
 app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
@@ -31,6 +32,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes); // Remove checkJwt from public routes
 app.use('/api/teams', checkJwt, teamRoutes);
 app.use('/api/projects', checkJwt, projectRoutes);
+app.use('/api/clubs', clubRoutes);
 app.use('/api', checkJwt, profileRoutes); // Changed from '/api/profiles' to '/api' to match frontend calls
 
 // Error handling

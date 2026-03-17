@@ -16,6 +16,8 @@ import ApplyForm from "./pages/ApplyForEvent";  // Import the component
 import { NavigationProvider } from './contexts/NavigationContext';
 import OrganiserDashboard from './pages/OrganiserDashboard.jsx';
 import EventDashboard from './pages/EventDashboard.jsx';
+import ProjectShowcase from './pages/ProjectShowcase';
+import ClubProjects from './pages/ClubProjects';
 
 const ProtectedRoute = ({ children, requiredRole }) => {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -98,6 +100,8 @@ const App = () => {
                 <Route path="/events/:id/apply" element={<ApplyForm />} />  {/* NEW ROUTE */}
                 <Route path="/org-dashboard" element={<OrganiserDashboard />} />
                 <Route path="/event-dashboard/:id" element={<EventDashboard />} />
+                <Route path="/projects" element={<ProjectShowcase />} />
+                <Route path="/projects/:id" element={<ClubProjects />} />
               </Routes>
             </main>
             <Footer />

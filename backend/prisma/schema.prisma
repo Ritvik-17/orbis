@@ -3,19 +3,20 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id             String           @id @default(cuid())
-  auth0Id        String           @unique
-  email          String           @unique
-  username       String           @unique
-  role           UserRole         @default(ORGANIZER)
-  status         UserStatus       @default(ACTIVE)
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
+  id             String             @id @default(cuid())
+  auth0Id        String             @unique
+  email          String             @unique
+  username       String             @unique
+  role           UserRole           @default(ORGANIZER)
+  status         UserStatus         @default(ACTIVE)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
   profile        UserProfile?
   education      UserEducation[]
   experience     UserExperience[]
@@ -24,6 +25,9 @@ model User {
   applications   Application[]
   createdEvents  Event[]
   teamMembers    TeamMember[]
+  comments       Comment[]
+  clubId         Int?               @unique
+  club           Club?              @relation("ClubConvener", fields: [clubId], references: [id])
 }
 
 model UserProfile {
@@ -43,14 +47,14 @@ model UserProfile {
 }
 
 model UserEducation {
-  id              Int       @id @default(autoincrement())
+  id              Int      @id @default(autoincrement())
   userId          String
   institutionName String
   degree          String
   fieldOfStudy    String
   graduationYear  Int?
-  createdAt       DateTime  @default(now())
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserExperience {
@@ -82,32 +86,69 @@ model UserSocialProfile {
   user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Club {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  logoUrl     String?
+  createdAt   DateTime  @default(now())
+  convener    User?     @relation("ClubConvener")
+  projects    Project[]
+}
+
+model Project {
+  id           Int       @id @default(autoincrement())
+  clubId       Int
+  title        String
+  description  String
+  githubUrl    String?
+  demoUrl      String?
+  contributors String[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  club         Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  comments     Comment[]
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  projectId Int
+  userId    String
+  content   String
+  parentId  Int?
+  createdAt DateTime  @default(now())
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id])
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentReplies")
+}
+
 model Event {
-  id                Int                 @id @default(autoincrement())
-  name              String
-  type              EventType
-  tagline           String?
-  about             String?
-  maxParticipants   Int?
-  minTeamSize       Int?
-  maxTeamSize       Int?
-  mode              EventMode          @default(ONLINE)
-  status            EventStatus        @default(DRAFT)
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  createdById       String
-  createdBy         User               @relation(fields: [createdById], references: [id])
-  timeline          EventTimeline?
-  links             EventLink?
-  branding          EventBranding?
-  tracks            Track[]
-  sponsors          Sponsor[]
-  eventPeople       EventPerson[]
-  applications      Application[]
-  applicationForm   ApplicationForm?
-  customQuestions   CustomQuestion[]
-  teams             Team[]
-  projects          ProjectSubmission[]
+  id              Int               @id @default(autoincrement())
+  name            String
+  type            EventType
+  tagline         String?
+  about           String?
+  maxParticipants Int?
+  minTeamSize     Int?
+  maxTeamSize     Int?
+  mode            EventMode         @default(ONLINE)
+  status          EventStatus       @default(DRAFT)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  createdById     String
+  createdBy       User              @relation(fields: [createdById], references: [id])
+  timeline        EventTimeline?
+  links           EventLink?
+  branding        EventBranding?
+  tracks          Track[]
+  sponsors        Sponsor[]
+  eventPeople     EventPerson[]
+  applications    Application[]
+  applicationForm ApplicationForm?
+  customQuestions CustomQuestion[]
+  teams           Team[]
+  projects        ProjectSubmission[]
 }
 
 model ApplicationForm {
@@ -132,14 +173,14 @@ model CustomQuestion {
 }
 
 model EventTimeline {
-  id                Int      @id @default(autoincrement())
-  eventId           Int      @unique
-  eventStart        DateTime
-  eventEnd          DateTime
-  applicationsStart DateTime?
-  applicationsEnd   DateTime?
-  rsvpDaysBeforeDeadline      Int?
-  event             Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  id                     Int       @id @default(autoincrement())
+  eventId                Int       @unique
+  eventStart             DateTime
+  eventEnd               DateTime
+  applicationsStart      DateTime?
+  applicationsEnd        DateTime?
+  rsvpDaysBeforeDeadline Int?
+  event                  Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model EventLink {
@@ -148,17 +189,17 @@ model EventLink {
   websiteUrl   String?
   micrositeUrl String?
   contactEmail String?
-  socialLinks  Json?   // For storing multiple social media links
+  socialLinks  Json?
   event        Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model EventBranding {
-  id        Int     @id @default(autoincrement())
-  eventId   Int     @unique
-  logoUrl   String?
-  coverUrl  String?
+  id         Int     @id @default(autoincrement())
+  eventId    Int     @unique
+  logoUrl    String?
+  coverUrl   String?
   brandColor String?
-  event     Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  event      Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model Track {
@@ -180,13 +221,13 @@ model Prize {
 }
 
 model Sponsor {
-  id          Int         @id @default(autoincrement())
-  eventId     Int
-  name        String
-  logoUrl     String?
-  websiteUrl  String?
-  tier        SponsorTier
-  event       Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  id         Int         @id @default(autoincrement())
+  eventId    Int
+  name       String
+  logoUrl    String?
+  websiteUrl String?
+  tier       SponsorTier
+  event      Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model EventPerson {
@@ -194,19 +235,19 @@ model EventPerson {
   eventId     Int
   name        String
   role        EventPersonRole
-  imageUrl    String?        
-  description String?        
-  socialLinks Json?          
-  event       Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  imageUrl    String?
+  description String?
+  socialLinks Json?
+  event       Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model Team {
   id           Int                @id @default(autoincrement())
   eventId      Int
   name         String
-  hashCode     String            @unique
-  createdAt    DateTime          @default(now())
-  event        Event             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  hashCode     String             @unique
+  createdAt    DateTime           @default(now())
+  event        Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
   members      TeamMember[]
   applications Application[]
   projects     ProjectSubmission[]
@@ -222,17 +263,18 @@ model TeamMember {
 }
 
 model Application {
-  id         Int              @id @default(autoincrement())
+  id         Int               @id @default(autoincrement())
   eventId    Int
   userId     String
   teamId     Int?
   status     ApplicationStatus
-  createdAt  DateTime         @default(now())
-  event      Event            @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user       User             @relation(fields: [userId], references: [id])
-  team       Team?            @relation(fields: [teamId], references: [id])
+  createdAt  DateTime          @default(now())
+  attendance Boolean           @default(false)
   userData   Json
   responses  Json
+  event      Event             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user       User              @relation(fields: [userId], references: [id])
+  team       Team?             @relation(fields: [teamId], references: [id])
 }
 
 model ProjectSubmission {
@@ -249,9 +291,12 @@ model ProjectSubmission {
   team        Team     @relation(fields: [teamId], references: [id])
 }
 
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
 enum UserRole {
   ADMIN
   ORGANIZER
+  CONVENER
 }
 
 enum UserStatus {
