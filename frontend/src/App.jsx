@@ -18,13 +18,10 @@ import { ChatProvider } from './contexts/ChatContext';
 import OrganiserDashboard from './pages/OrganiserDashboard.jsx';
 import Forms from "./pages/forms/Forms.jsx"
 import EventDashboard from './pages/EventDashboard.jsx';
-<<<<<<< HEAD
 import ProjectShowcase from './pages/ProjectShowcase';
 import ClubProjects from './pages/ClubProjects';
-=======
 import Community from './pages/Community.jsx';
 import Inbox from './pages/Inbox.jsx';
->>>>>>> community-module
 import CreateForm from "./pages/forms/CreateForm"
 import FormView from "./pages/forms/FormView";
 import Responses from "./pages/forms/Responses";

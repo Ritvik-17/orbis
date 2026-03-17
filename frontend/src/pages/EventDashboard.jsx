@@ -470,36 +470,12 @@ const EventDashboard = () => {
 
     return (
         <>
-<<<<<<< HEAD
-            <div className="max-w-7xl mx-auto py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
-=======
             <div className="max-w-7xl mx-auto pt-32 pb-16 px-4 sm:px-6 lg:px-8">
->>>>>>> community-module
                 <div className="text-center">
                     <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900">{event.name}</h1>
                     <p className="mt-3 max-w-2xl mx-auto text-base sm:text-xl text-gray-500 sm:mt-4">{event.tagline}</p>
                 </div>
 
-<<<<<<< HEAD
-                {/* Nav tabs — scrollable on mobile */}
-                <div className="sticky top-16 bg-white py-3 sm:py-4 mt-6 sm:mt-8 z-10">
-                    <nav className="flex justify-center">
-                        <div className="flex space-x-2 sm:space-x-4 overflow-x-auto pb-1 px-2 scrollbar-hide">
-                            {['overview', 'review', 'admin', 'attendance'].map(section => (
-                                <button
-                                    key={section}
-                                    className={`px-3 sm:px-4 py-2 rounded-lg transition whitespace-nowrap text-sm sm:text-base capitalize flex-shrink-0 ${
-                                        activeSection === section
-                                            ? 'bg-black text-white'
-                                            : 'bg-gray-200 text-black hover:bg-blue-200 hover:text-gray-800'
-                                    }`}
-                                    onClick={() => handleSectionChange(section)}
-                                >
-                                    {section.charAt(0).toUpperCase() + section.slice(1)}
-                                </button>
-                            ))}
-                        </div>
-=======
                 <div className="sticky top-24 z-10 bg-white/80 backdrop-blur-sm px-6 py-4 mt-8 flex justify-center items-center space-x-4 w-auto">
                     <nav className="flex space-x-4">
                         <button
@@ -532,7 +508,6 @@ const EventDashboard = () => {
                         >
                             Admin
                         </button>
->>>>>>> community-module
                     </nav>
                 </div>
 
