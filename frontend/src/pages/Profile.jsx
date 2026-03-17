@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { authAPI, profileAPI } from '../api/api';
-import { useNavigate, Link } from 'react-router-dom';
+import { authAPI, postsAPI, friendsAPI } from '../api/api';
+import UserAvatar from '../components/common/UserAvatar';
 
 const Profile = ({ initialEditMode = false }) => {
+  const { id } = useParams();
   const { user: auth0User, isLoading } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(initialEditMode);
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     profile: {},
@@ -22,19 +25,32 @@ const Profile = ({ initialEditMode = false }) => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        console.log(auth0User)
-        console.log('fetching profiles...')
-        const userData = await authAPI.getCurrentUser();
-        console.log(userData);
+        setLoading(true);
+        let userData;
+        
+        if (!id) {
+          // Fetch current user's profile
+          userData = await authAPI.getCurrentUser();
+          setIsOwnProfile(true);
+        } else {
+          // Fetch specific user's public profile
+          userData = await postsAPI.getUserProfile(id);
+          // Check if it's the current user by ID (need to fetch current user's ID first or have it in AuthContext)
+          const currentUser = await authAPI.getCurrentUser();
+          setIsOwnProfile(currentUser.id === id);
+        }
+
         setProfile(userData);
-        setFormData({
-          profile: userData.profile || {},
-          education: userData.education || [],
-          experience: userData.experience || [],
-          skills: userData.skills || [],
-          socialProfiles: userData.socialProfiles || [],
-          projects: userData.projects || [],
-        });
+        if (setIsOwnProfile) {
+          setFormData({
+            profile: userData.profile || {},
+            education: userData.education || [],
+            experience: userData.experience || [],
+            skills: userData.skills || [],
+            socialProfiles: userData.socialProfiles || [],
+            projects: userData.projects || [],
+          });
+        }
       } catch (err) {
         console.error('Error fetching profile:', err);
         setError('Failed to load profile');
@@ -46,14 +62,19 @@ const Profile = ({ initialEditMode = false }) => {
     if (auth0User) {
       fetchProfile();
     }
-  }, [auth0User]);
+  }, [auth0User, id]);
 
   if (isLoading || loading) {
-    return <div className="container-width py-20">Loading...</div>;
+    return (
+      <div className="container mx-auto px-4 pt-32 pb-12 flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
+        <p className="text-gray-500 font-medium">Loading profile...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="container-width py-20 text-red-500">{error}</div>;
+    return <div className="container mx-auto px-4 pt-32 pb-12 text-red-500">{error}</div>;
   }
 
   const handleChange = (e, section, index = null) => {
@@ -132,7 +153,7 @@ const Profile = ({ initialEditMode = false }) => {
     profile?.profile?.phone;
 
   return (
-    <div className="container-width pt-48 pb-12">
+    <div className="container mx-auto px-4 pt-32 pb-12">
       <div className="max-w-4xl mx-auto">
         {!isEditing ? (
           <div className="mt-8">
@@ -144,14 +165,66 @@ const Profile = ({ initialEditMode = false }) => {
               </div>
             )}
             
-            <div className="flex justify-between items-center mb-8 mt-20">
-              <h1 className="text-3xl font-bold">Profile</h1>
-              <button 
-                onClick={toggleEdit}
-                className="px-6 py-2.5 rounded-full text-sm font-medium bg-black text-white hover:bg-gray-900 cursor-pointer"
-              >
-                {isProfileComplete ? 'Edit Profile' : 'Complete Profile'}
-              </button>
+            <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6 bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                <UserAvatar 
+                  user={profile} 
+                  className="w-32 h-32 text-4xl border-4 border-white shadow-xl"
+                />
+                <div className="flex-1 text-center md:text-left">
+                  <h1 className="text-3xl font-bold">{renderName(profile.profile?.firstName, profile.profile?.lastName) || profile.username}</h1>
+                  <p className="text-gray-500 font-medium">{profile.role} • {profile.status}</p>
+                  {isOwnProfile && <p className="text-xs text-indigo-600 mt-1 font-bold uppercase tracking-wider">Your Profile</p>}
+                </div>
+              </div>
+              
+              <div className="flex flex-wrap justify-center gap-3">
+                {isOwnProfile ? (
+                  <button 
+                    onClick={toggleEdit}
+                    className="px-6 py-2.5 rounded-full text-sm font-medium bg-black text-white hover:bg-gray-900 cursor-pointer transition shadow-lg shadow-gray-200"
+                  >
+                    {isProfileComplete ? 'Edit Profile' : 'Complete Profile'}
+                  </button>
+                ) : (
+                  <>
+                    <Link
+                      to={`/inbox?user=${profile.id}`}
+                      className="px-6 py-2.5 rounded-full text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-lg shadow-indigo-100"
+                    >
+                      Message
+                    </Link>
+                    {profile.role === 'ORGANIZER' && (
+                      <button 
+                        onClick={async () => {
+                          try {
+                            await friendsAPI.followOrganizer(profile.id);
+                            alert('Following organizer!');
+                          } catch (err) {
+                            alert(err.response?.data?.error || 'Failed to follow');
+                          }
+                        }}
+                        className="px-6 py-2.5 rounded-full text-sm font-bold bg-white border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 transition"
+                      >
+                        Follow
+                      </button>
+                    )}
+                    <button 
+                      onClick={async () => {
+                        try {
+                          await friendsAPI.sendRequest(profile.id);
+                          alert('Friend request sent!');
+                        } catch (err) {
+                          alert(err.response?.data?.error || 'Failed to send request');
+                        }
+                      }}
+                      className="px-6 py-2.5 rounded-full text-sm font-bold border border-gray-200 bg-white hover:bg-gray-50 transition"
+                    >
+                      Add Friend
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
             
             {/* Basic Info */}
@@ -380,6 +453,17 @@ const Profile = ({ initialEditMode = false }) => {
                     placeholder="City"
                     className="w-full px-3 py-2 border rounded"
                   />
+                  <div className="col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Profile Picture URL</label>
+                    <input
+                      type="text"
+                      name="avatarUrl"
+                      value={formData.profile.avatarUrl || ''}
+                      onChange={(e) => handleChange(e, 'profile')}
+                      placeholder="https://example.com/avatar.jpg"
+                      className="w-full px-3 py-2 border rounded"
+                    />
+                  </div>
                 </div>
                 <textarea
                   name="bio"

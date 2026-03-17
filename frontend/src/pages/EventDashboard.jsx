@@ -470,12 +470,17 @@ const EventDashboard = () => {
 
     return (
         <>
+<<<<<<< HEAD
             <div className="max-w-7xl mx-auto py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+=======
+            <div className="max-w-7xl mx-auto pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+>>>>>>> community-module
                 <div className="text-center">
                     <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900">{event.name}</h1>
                     <p className="mt-3 max-w-2xl mx-auto text-base sm:text-xl text-gray-500 sm:mt-4">{event.tagline}</p>
                 </div>
 
+<<<<<<< HEAD
                 {/* Nav tabs — scrollable on mobile */}
                 <div className="sticky top-16 bg-white py-3 sm:py-4 mt-6 sm:mt-8 z-10">
                     <nav className="flex justify-center">
@@ -494,6 +499,40 @@ const EventDashboard = () => {
                                 </button>
                             ))}
                         </div>
+=======
+                <div className="sticky top-24 z-10 bg-white/80 backdrop-blur-sm px-6 py-4 mt-8 flex justify-center items-center space-x-4 w-auto">
+                    <nav className="flex space-x-4">
+                        <button
+                            className={`px-4 py-2 rounded-lg transition ${
+                            activeSection === 'overview'
+                                ? 'bg-black text-white'
+                                : 'bg-gray-200 text-black hover:bg-blue-200 hover:text-gray-800'
+                            }`}
+                            onClick={() => handleSectionChange('overview')}
+                        >
+                            Overview
+                        </button>
+                        <button
+                            className={`px-4 py-2 rounded-lg transition ${
+                            activeSection === 'review'
+                                ? 'bg-black text-white'
+                                : 'bg-gray-200 text-black hover:bg-blue-200 hover:text-gray-800'
+                            }`}
+                            onClick={() => handleSectionChange('review')}
+                        >
+                            Review
+                        </button>
+                        <button
+                            className={`px-4 py-2 rounded-lg transition ${
+                            activeSection === 'admin'
+                                ? 'bg-black text-white'
+                                : 'bg-gray-200 text-black hover:bg-blue-200 hover:text-gray-800'
+                            }`}
+                            onClick={() => handleSectionChange('admin')}
+                        >
+                            Admin
+                        </button>
+>>>>>>> community-module
                     </nav>
                 </div>
 

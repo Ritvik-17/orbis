@@ -218,7 +218,8 @@ const ApplyForEvent = () => {
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="max-w-lg mx-auto bg-white shadow-lg rounded-xl p-6 mt-16">
+    <div className="container mx-auto px-4 pt-32 pb-12">
+      <div className="max-w-lg mx-auto bg-white shadow-lg rounded-xl p-6">
       {/* Event Title */}
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
         Apply for Event: {event?.name}
@@ -625,6 +626,7 @@ const ApplyForEvent = () => {
           Submit
         </button>
       </form>
+    </div>
     </div>
   );
 };
