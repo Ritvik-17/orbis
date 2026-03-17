@@ -8,27 +8,27 @@ datasource db {
 }
 
 model User {
-  id             String           @id @default(cuid())
-  auth0Id        String           @unique
-  email          String           @unique
-  username       String           @unique
-  role           UserRole         @default(ORGANIZER)
-  status         UserStatus       @default(ACTIVE)
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  profile        UserProfile?
-  education      UserEducation[]
-  experience     UserExperience[]
-  skills         UserSkill[]
-  socialProfiles UserSocialProfile[]
+  id             String              @id @default(cuid())
+  email          String              @unique
+  username       String              @unique
+  role           UserRole            @default(ORGANIZER)
+  status         UserStatus          @default(ACTIVE)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  auth0Id        String              @unique
   applications   Application[]
   createdEvents  Event[]
   teamMembers    TeamMember[]
+  education      UserEducation[]
+  experience     UserExperience[]
+  profile        UserProfile?
+  skills         UserSkill[]
+  socialProfiles UserSocialProfile[]
 }
 
 model UserProfile {
-  id        Int       @id @default(autoincrement())
-  userId    String    @unique
+  id        Int      @id @default(autoincrement())
+  userId    String   @unique
   firstName String?
   lastName  String?
   avatarUrl String?
@@ -37,20 +37,20 @@ model UserProfile {
   phone     String?
   country   String?
   city      String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserEducation {
-  id              Int       @id @default(autoincrement())
+  id              Int      @id @default(autoincrement())
   userId          String
   institutionName String
-  degree          String
   fieldOfStudy    String
   graduationYear  Int?
-  createdAt       DateTime  @default(now())
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  degree          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserExperience {
@@ -83,31 +83,31 @@ model UserSocialProfile {
 }
 
 model Event {
-  id                Int                 @id @default(autoincrement())
-  name              String
-  type              EventType
-  tagline           String?
-  about             String?
-  maxParticipants   Int?
-  minTeamSize       Int?
-  maxTeamSize       Int?
-  mode              EventMode          @default(ONLINE)
-  status            EventStatus        @default(DRAFT)
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  createdById       String
-  createdBy         User               @relation(fields: [createdById], references: [id])
-  timeline          EventTimeline?
-  links             EventLink?
-  branding          EventBranding?
-  tracks            Track[]
-  sponsors          Sponsor[]
-  eventPeople       EventPerson[]
-  applications      Application[]
-  applicationForm   ApplicationForm?
-  customQuestions   CustomQuestion[]
-  teams             Team[]
-  projects          ProjectSubmission[]
+  id              Int                 @id @default(autoincrement())
+  name            String
+  type            EventType
+  tagline         String?
+  about           String?
+  maxParticipants Int?
+  minTeamSize     Int?
+  maxTeamSize     Int?
+  createdAt       DateTime            @default(now())
+  createdById     String
+  mode            EventMode           @default(ONLINE)
+  status          EventStatus         @default(DRAFT)
+  updatedAt       DateTime            @updatedAt
+  applications    Application[]
+  applicationForm ApplicationForm?
+  customQuestions CustomQuestion[]
+  createdBy       User                @relation(fields: [createdById], references: [id])
+  branding        EventBranding?
+  links           EventLink?
+  eventPeople     EventPerson[]
+  timeline        EventTimeline?
+  projects        ProjectSubmission[]
+  sponsors        Sponsor[]
+  teams           Team[]
+  tracks          Track[]
 }
 
 model ApplicationForm {
@@ -132,14 +132,14 @@ model CustomQuestion {
 }
 
 model EventTimeline {
-  id                Int      @id @default(autoincrement())
-  eventId           Int      @unique
-  eventStart        DateTime
-  eventEnd          DateTime
-  applicationsStart DateTime?
-  applicationsEnd   DateTime?
-  rsvpDaysBeforeDeadline      Int?
-  event             Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  id                     Int       @id @default(autoincrement())
+  eventId                Int       @unique
+  applicationsStart      DateTime?
+  applicationsEnd        DateTime?
+  eventStart             DateTime
+  eventEnd               DateTime
+  rsvpDaysBeforeDeadline Int?
+  event                  Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model EventLink {
@@ -148,17 +148,17 @@ model EventLink {
   websiteUrl   String?
   micrositeUrl String?
   contactEmail String?
-  socialLinks  Json?   // For storing multiple social media links
+  socialLinks  Json?
   event        Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model EventBranding {
-  id        Int     @id @default(autoincrement())
-  eventId   Int     @unique
-  logoUrl   String?
-  coverUrl  String?
+  id         Int     @id @default(autoincrement())
+  eventId    Int     @unique
   brandColor String?
-  event     Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  coverUrl   String?
+  logoUrl    String?
+  event      Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model Track {
@@ -180,13 +180,13 @@ model Prize {
 }
 
 model Sponsor {
-  id          Int         @id @default(autoincrement())
-  eventId     Int
-  name        String
-  logoUrl     String?
-  websiteUrl  String?
-  tier        SponsorTier
-  event       Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  id         Int         @id @default(autoincrement())
+  eventId    Int
+  name       String
+  logoUrl    String?
+  tier       SponsorTier
+  websiteUrl String?
+  event      Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model EventPerson {
@@ -194,22 +194,22 @@ model EventPerson {
   eventId     Int
   name        String
   role        EventPersonRole
-  imageUrl    String?        
-  description String?        
-  socialLinks Json?          
-  event       Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  imageUrl    String?
+  description String?
+  socialLinks Json?
+  event       Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model Team {
-  id           Int                @id @default(autoincrement())
+  id           Int                 @id @default(autoincrement())
   eventId      Int
   name         String
-  hashCode     String            @unique
-  createdAt    DateTime          @default(now())
-  event        Event             @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  members      TeamMember[]
+  createdAt    DateTime            @default(now())
+  hashCode     String              @unique
   applications Application[]
   projects     ProjectSubmission[]
+  event        Event               @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  members      TeamMember[]
 }
 
 model TeamMember {
@@ -222,17 +222,17 @@ model TeamMember {
 }
 
 model Application {
-  id         Int              @id @default(autoincrement())
-  eventId    Int
-  userId     String
-  teamId     Int?
-  status     ApplicationStatus
-  createdAt  DateTime         @default(now())
-  event      Event            @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user       User             @relation(fields: [userId], references: [id])
-  team       Team?            @relation(fields: [teamId], references: [id])
-  userData   Json
-  responses  Json
+  id        Int               @id @default(autoincrement())
+  eventId   Int
+  userId    String
+  teamId    Int?
+  status    ApplicationStatus
+  createdAt DateTime          @default(now())
+  responses Json
+  userData  Json
+  event     Event             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  team      Team?             @relation(fields: [teamId], references: [id])
+  user      User              @relation(fields: [userId], references: [id])
 }
 
 model ProjectSubmission {
@@ -247,6 +247,55 @@ model ProjectSubmission {
   updatedAt   DateTime @updatedAt
   event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   team        Team     @relation(fields: [teamId], references: [id])
+}
+
+model Form {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String?
+  description String
+  createdBy   String?      @map("created_by")
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  questions   Question[]
+  submissions Submission[]
+
+  @@map("forms")
+}
+
+model Question {
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  formId       String?       @map("form_id") @db.Uuid
+  questionText String        @default("") @map("question_text")
+  questionType QuestionType? @map("question_type")
+  options      String[]
+  is_required  Boolean?      @default(false)
+  sort_order   Int?          @default(0)
+  form         Form?         @relation(fields: [formId], references: [id])
+  responses    Response[]
+
+  @@map("questions")
+}
+
+model Submission {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  formId    String?    @map("form_id") @db.Uuid
+  responses Response[]
+  form      Form?      @relation(fields: [formId], references: [id])
+
+  @@map("submissions")
+}
+
+model Response {
+  id           BigInt      @id @default(autoincrement())
+  createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  submissionId String?     @map("submission_id") @db.Uuid
+  questionId   String?     @map("question_id") @db.Uuid
+  answer       String?     @default("")
+  question     Question?   @relation(fields: [questionId], references: [id])
+  submission   Submission? @relation(fields: [submissionId], references: [id])
+
+  @@map("responses")
 }
 
 enum UserRole {
@@ -321,66 +370,14 @@ enum TeamMemberRole {
   MEMBER
 }
 
-
-
 enum QuestionType {
   TEXT
   MCQ
   MULTIPLE_CHOICE
-  CHECKBOXES
-  DROPDOWNS
-  STAR_RATINGS
+  CHECKBOX
+  DROPDOWN
+  RATING
+  LONG_TEXT
 
   @@map("question_type")
 }
-
-model Form {
-  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title       String?
-  description String
-  createdBy   String?      @map("created_by")
-  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz
-  
-  questions   Question[]
-  submissions Submission[]
-
-  @@map("forms")
-}
-
-model Question {
-  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamptz
-  formId       String?       @map("form_id") @db.Uuid
-  questionText String        @default("") @map("question_text")
-  questionType QuestionType? @map("question_type")
-  
-  form      Form?       @relation(fields: [formId], references: [id])
-  responses Response[]
-
-  @@map("questions")
-}
-
-model Submission {
-  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz
-  formId    String?    @map("form_id") @db.Uuid
-  
-  form      Form?      @relation(fields: [formId], references: [id])
-  responses Response[]
-
-  @@map("submissions")
-}
-
-model Response {
-  id           BigInt      @id @default(autoincrement())
-  createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamptz
-  submissionId String?     @map("submission_id") @db.Uuid
-  questionId   String?     @map("question_id") @db.Uuid
-  answer       String?     @default("")
-  
-  submission Submission? @relation(fields: [submissionId], references: [id])
-  question   Question?   @relation(fields: [questionId], references: [id])
-
-  @@map("responses")
-}
-
