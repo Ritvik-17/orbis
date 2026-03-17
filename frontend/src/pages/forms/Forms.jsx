@@ -12,14 +12,19 @@ const Forms = () => {
 
   const fetchForms = async () => {
     // Fetch form
-    const { data: formdata } = await supabase
-      .from("forms")
-      .select("*")
+    const { data: formdata } = await supabase.from("forms").select("*");
 
     setForms(formdata);
   };
   return (
-    <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto",paddingTop:"60px" }}>
+    <div
+      style={{
+        padding: "20px",
+        maxWidth: "1200px",
+        margin: "0 auto",
+        paddingTop: "60px",
+      }}
+    >
       <h1 style={{ marginBottom: "24px" }}>All Available Forms</h1>
 
       {/* Grid Layout for Forms */}
@@ -47,9 +52,26 @@ const Forms = () => {
               <h2 style={{ margin: "0 0 10px 0", fontSize: "1.25rem" }}>
                 {form.title}
               </h2>
-              <p style={{ color: "#666", fontSize: "0.9rem" }}>
-                {form.description}
-              </p>
+              <div className="flex items-" >
+                <p
+                  style={{
+                    color: "#666",
+                    fontSize: "0.9rem",
+                    display: "inline",
+                  }}
+                >
+                  {form.description}
+                </p>
+                <p
+                  style={{
+                    color: "#666",
+                    fontSize: "0.9rem",
+                    display: "inline",
+                  }}
+                >
+                  {new Date(form.created_at).toLocaleDateString()}
+                </p>
+              </div>
             </div>
 
             <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>

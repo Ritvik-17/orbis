@@ -67,14 +67,14 @@ const Navbar = () => {
           </button>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-12">
+          <div className="hidden md:flex place-items-baseline space-x-12">
             <a href="/#about" className="text-sm text-gray-500 hover:text-black transition-colors tracking-wide">
               About
             </a>
             <Link to="/events" className="text-sm text-gray-500 hover:text-black transition-colors tracking-wide">
               Events
             </Link>
-            <Link to="/events" className="text-sm text-gray-500 hover:text-black transition-colors tracking-wide">
+            <Link to="/forms" className="text-sm text-gray-500 hover:text-black transition-colors tracking-wide">
               Forms
             </Link>
             <a href="/#testimonials" className="text-sm text-gray-500 hover:text-black transition-colors tracking-wide">
@@ -86,10 +86,11 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Auth Buttons */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-1">
             {isAuthenticated ? (
               <>
                 <Button variant="text" to="/profile">Profile</Button>
+                <Button variant="secondary" to="/create" size="sm">Create Form</Button>
                 <Button variant="primary" onClick={() => logout()}>Logout</Button>
               </>
             ) : (
