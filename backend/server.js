@@ -14,13 +14,10 @@ import eventRoutes from './src/routes/events.js';
 import teamRoutes from './src/routes/teams.js';
 import projectRoutes from './src/routes/projects.js';
 import profileRoutes from './src/routes/profiles.js';
-<<<<<<< HEAD
 import clubRoutes from './src/routes/clubs.js';
-=======
 import postRoutes from './src/routes/posts.js';
 import friendRoutes from './src/routes/friends.js';
 import messageRoutes from './src/routes/messages.js';
->>>>>>> community-module
 
 const app = express();
 const httpServer = createServer(app);

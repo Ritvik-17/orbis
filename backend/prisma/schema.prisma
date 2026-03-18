@@ -9,32 +9,28 @@ datasource db {
 }
 
 model User {
-  id             String             @id @default(cuid())
-  auth0Id        String             @unique
-  email          String             @unique
-  username       String             @unique
-  role           UserRole           @default(ORGANIZER)
-  status         UserStatus         @default(ACTIVE)
-  createdAt      DateTime           @default(now())
-  updatedAt      DateTime           @updatedAt
+  id             String              @id @default(cuid())
+  auth0Id        String              @unique
+  email          String              @unique
+  username       String              @unique
+  role           UserRole            @default(ORGANIZER)
+  status         UserStatus          @default(ACTIVE)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
   profile        UserProfile?
   education      UserEducation[]
   experience     UserExperience[]
   skills         UserSkill[]
   socialProfiles UserSocialProfile[]
-<<<<<<< HEAD
   applications   Application[]
   createdEvents  Event[]
   teamMembers    TeamMember[]
-  comments       Comment[]
-  clubId         Int?               @unique
-  club           Club?              @relation("ClubConvener", fields: [clubId], references: [id])
-=======
+  clubId         Int?                @unique
+  club           Club?               @relation("ClubConvener", fields: [clubId], references: [id])
 
   // Community Module Relations
   posts            Post[]
   reactions        Reaction[]
-  comments         Comment[]
   friendships      Friendship[]         @relation("UserFriendships")
   friendOf         Friendship[]         @relation("FriendUser")
   sentRequests     FriendRequest[]      @relation("SentRequests")
@@ -43,7 +39,7 @@ model User {
   following        Follow[]             @relation("UserFollowing")
   conversations    ConversationMember[]
   messages         Message[]
->>>>>>> community-module
+  postcomment      PostComment[]
 }
 
 model UserProfile {
@@ -68,8 +64,8 @@ model UserEducation {
   institutionName String
   fieldOfStudy    String
   graduationYear  Int?
-  createdAt       DateTime  @default(now())
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserExperience {
@@ -112,35 +108,35 @@ model Club {
 }
 
 model Project {
-  id           Int       @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   clubId       Int
   title        String
   description  String
   githubUrl    String?
   demoUrl      String?
   contributors String[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  club         Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  club         Club          @relation(fields: [clubId], references: [id], onDelete: Cascade)
   comments     Comment[]
+  postcomment  PostComment[]
 }
 
-model Comment {
-  id        Int       @id @default(autoincrement())
+model PostComment {
+  id        Int           @id @default(autoincrement())
   projectId Int
   userId    String
   content   String
   parentId  Int?
-  createdAt DateTime  @default(now())
-  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  user      User      @relation(fields: [userId], references: [id])
-  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
-  replies   Comment[] @relation("CommentReplies")
+  createdAt DateTime      @default(now())
+  project   Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User          @relation(fields: [userId], references: [id])
+  parent    PostComment?  @relation("PostCommentToReplies", fields: [parentId], references: [id])
+  replies   PostComment[] @relation("PostCommentToReplies")
 }
 
 model Event {
-<<<<<<< HEAD
-  id              Int               @id @default(autoincrement())
+  id              Int                 @id @default(autoincrement())
   name            String
   type            EventType
   tagline         String?
@@ -148,12 +144,12 @@ model Event {
   maxParticipants Int?
   minTeamSize     Int?
   maxTeamSize     Int?
-  mode            EventMode         @default(ONLINE)
-  status          EventStatus       @default(DRAFT)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  mode            EventMode           @default(ONLINE)
+  status          EventStatus         @default(DRAFT)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
   createdById     String
-  createdBy       User              @relation(fields: [createdById], references: [id])
+  createdBy       User                @relation(fields: [createdById], references: [id])
   timeline        EventTimeline?
   links           EventLink?
   branding        EventBranding?
@@ -165,34 +161,7 @@ model Event {
   customQuestions CustomQuestion[]
   teams           Team[]
   projects        ProjectSubmission[]
-=======
-  id                Int                 @id @default(autoincrement())
-  name              String
-  type              EventType
-  tagline           String?
-  about             String?
-  maxParticipants   Int?
-  minTeamSize       Int?
-  maxTeamSize       Int?
-  mode              EventMode          @default(ONLINE)
-  status            EventStatus        @default(DRAFT)
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  createdById       String
-  createdBy         User               @relation(fields: [createdById], references: [id])
-  timeline          EventTimeline?
-  links             EventLink?
-  branding          EventBranding?
-  tracks            Track[]
-  sponsors          Sponsor[]
-  eventPeople       EventPerson[]
-  applications      Application[]
-  applicationForm   ApplicationForm?
-  customQuestions   CustomQuestion[]
-  teams             Team[]
-  projects          ProjectSubmission[]
-  posts             Post[]              // For event invite cards embedded in posts
->>>>>>> community-module
+  posts           Post[] // For event invite cards embedded in posts
 }
 
 model ApplicationForm {
@@ -289,14 +258,12 @@ model Team {
   id           Int                 @id @default(autoincrement())
   eventId      Int
   name         String
-  hashCode     String             @unique
-  createdAt    DateTime           @default(now())
-  event        Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  hashCode     String              @unique
+  createdAt    DateTime            @default(now())
+  event        Event               @relation(fields: [eventId], references: [id], onDelete: Cascade)
   members      TeamMember[]
   applications Application[]
   projects     ProjectSubmission[]
-  event        Event               @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  members      TeamMember[]
 }
 
 model TeamMember {
@@ -466,19 +433,19 @@ enum TeamMemberRole {
 // ==========================================
 
 model Post {
-  id        String      @id @default(cuid())
-  content   String      @db.Text
+  id        String   @id @default(cuid())
+  content   String   @db.Text
   authorId  String
-  eventId   Int?        // Optional event link for invites
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  eventId   Int? // Optional event link for invites
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   author    User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
   event     Event?      @relation(fields: [eventId], references: [id], onDelete: SetNull)
   images    PostImage[]
   tags      PostTag[]
   reactions Reaction[]
-  comments  Comment[]
+  postcomment      PostComment[]
 }
 
 model PostImage {
@@ -487,21 +454,21 @@ model PostImage {
   url       String
   createdAt DateTime @default(now())
 
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model Tag {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  posts     PostTag[]
+  id    String    @id @default(cuid())
+  name  String    @unique
+  posts PostTag[]
 }
 
 model PostTag {
-  postId    String
-  tagId     String
+  postId String
+  tagId  String
 
-  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
-  tag       Tag       @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([postId, tagId])
 }
@@ -513,37 +480,39 @@ model Reaction {
   type      ReactionType
   createdAt DateTime     @default(now())
 
-  post      Post         @relation(fields: [postId], references: [id], onDelete: Cascade)
-  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([postId, userId]) // User can only react once per post
 }
 
 model Comment {
-  id              String    @id @default(cuid())
-  content         String    @db.Text
+  id              String   @id @default(cuid())
+  content         String   @db.Text
   postId          String
   userId          String
   parentCommentId String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  post            Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  parentComment   Comment?  @relation("ThreadedComments", fields: [parentCommentId], references: [id], onDelete: Cascade)
-  replies         Comment[] @relation("ThreadedComments")
+  post          Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parentComment Comment?  @relation("ThreadedComments", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  replies       Comment[] @relation("ThreadedComments")
+  Project       Project?  @relation(fields: [projectId], references: [id])
+  projectId     Int?
 }
 
 model FriendRequest {
-  id         String               @id @default(cuid())
+  id         String              @id @default(cuid())
   senderId   String
   receiverId String
-  status     FriendRequestStatus  @default(PENDING)
-  createdAt  DateTime             @default(now())
-  updatedAt  DateTime             @updatedAt
+  status     FriendRequestStatus @default(PENDING)
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
 
-  sender     User                 @relation("SentRequests", fields: [senderId], references: [id], onDelete: Cascade)
-  receiver   User                 @relation("ReceivedRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+  sender   User @relation("SentRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedRequests", fields: [receiverId], references: [id], onDelete: Cascade)
 
   @@unique([senderId, receiverId])
 }
@@ -554,8 +523,8 @@ model Friendship {
   friendId  String
   createdAt DateTime @default(now())
 
-  user      User     @relation("UserFriendships", fields: [userId], references: [id], onDelete: Cascade)
-  friend    User     @relation("FriendUser", fields: [friendId], references: [id], onDelete: Cascade)
+  user   User @relation("UserFriendships", fields: [userId], references: [id], onDelete: Cascade)
+  friend User @relation("FriendUser", fields: [friendId], references: [id], onDelete: Cascade)
 
   @@unique([userId, friendId])
 }
@@ -566,45 +535,45 @@ model Follow {
   followingId String
   createdAt   DateTime @default(now())
 
-  follower    User     @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
-  following   User     @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+  follower  User @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@unique([followerId, followingId])
 }
 
 model Conversation {
-  id        String               @id @default(cuid())
-  isGroup   Boolean              @default(false)
-  name      String?              // Optional for groups
-  createdAt DateTime             @default(now())
-  updatedAt DateTime             @updatedAt
+  id        String   @id @default(cuid())
+  isGroup   Boolean  @default(false)
+  name      String? // Optional for groups
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  members   ConversationMember[]
-  messages  Message[]
+  members  ConversationMember[]
+  messages Message[]
 }
 
 model ConversationMember {
-  id             String       @id @default(cuid())
+  id             String   @id @default(cuid())
   conversationId String
   userId         String
-  joinedAt       DateTime     @default(now())
+  joinedAt       DateTime @default(now())
 
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([conversationId, userId])
 }
 
 model Message {
-  id             String       @id @default(cuid())
+  id             String   @id @default(cuid())
   conversationId String
   senderId       String
-  content        String       @db.Text
-  isRead         Boolean      @default(false)
-  createdAt      DateTime     @default(now())
+  content        String   @db.Text
+  isRead         Boolean  @default(false)
+  createdAt      DateTime @default(now())
 
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
 }
 
 enum ReactionType {

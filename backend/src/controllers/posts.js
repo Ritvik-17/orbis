@@ -34,7 +34,7 @@ export const createPost = async (req, res) => {
         tags: { include: { tag: true } },
         event: true,
         reactions: true,
-        _count: { select: { comments: true, reactions: true } }
+        _count: { select: { postcomment: true, reactions: true } }
       }
     });
 
@@ -61,7 +61,7 @@ export const getPosts = async (req, res) => {
         tags: { include: { tag: true } },
         event: true,
         reactions: true,
-        _count: { select: { comments: true } }
+        _count: { select: { postcomment: true } }
       }
     });
 
@@ -121,7 +121,7 @@ export const addComment = async (req, res) => {
     const { id: postId } = req.params;
     const { content, parentCommentId } = req.body;
 
-    const comment = await prisma.comment.create({
+    const comment = await prisma.PostComment.create({
       data: {
         content,
         post: { connect: { id: postId } },
@@ -145,7 +145,7 @@ export const getComments = async (req, res) => {
     const { id: postId } = req.params;
     
     // Fetch top level comments and their replies (1 level deep)
-    const comments = await prisma.comment.findMany({
+    const comments = await prisma.PostComment.findMany({
       where: { postId, parentCommentId: null },
       orderBy: { createdAt: 'asc' },
       include: {
