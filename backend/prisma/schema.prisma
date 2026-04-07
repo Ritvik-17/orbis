@@ -40,6 +40,7 @@ model User {
   conversations    ConversationMember[]
   messages         Message[]
   postcomment      PostComment[]
+  Comment          Comment[]
 }
 
 model UserProfile {
@@ -133,6 +134,8 @@ model PostComment {
   user      User          @relation(fields: [userId], references: [id])
   parent    PostComment?  @relation("PostCommentToReplies", fields: [parentId], references: [id])
   replies   PostComment[] @relation("PostCommentToReplies")
+  Post      Post?         @relation(fields: [postId], references: [id])
+  postId    String?
 }
 
 model Event {
@@ -440,12 +443,13 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  author    User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  event     Event?      @relation(fields: [eventId], references: [id], onDelete: SetNull)
-  images    PostImage[]
-  tags      PostTag[]
-  reactions Reaction[]
-  postcomment      PostComment[]
+  author      User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  event       Event?        @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  images      PostImage[]
+  tags        PostTag[]
+  reactions   Reaction[]
+  postcomment PostComment[]
+  Comment     Comment[]
 }
 
 model PostImage {

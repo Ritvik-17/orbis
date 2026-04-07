@@ -79,42 +79,14 @@ const ProjectShowcase = () => {
 
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0"
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, rgba(0,0,0,0.03) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(0,0,0,0.03) 1px, transparent 1px)
-            `,
-            backgroundSize: '40px 40px',
-          }}
-        />
-        <div className="absolute inset-0"
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, rgba(0,0,0,0.07) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(0,0,0,0.07) 1px, transparent 1px)
-            `,
-            backgroundSize: '200px 200px',
-          }}
-        />
-        <div className="absolute inset-0"
-          style={{
-            background: 'radial-gradient(circle at 50% 50%, transparent 0%, rgba(255,255,255,0.7) 100%)',
-          }}
-        />
-      </div>
-
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-10 text-center">
-        <h1 className="text-3xl sm:text-5xl font-normal text-gray-900 mb-4 leading-tight tracking-tight">
+        <h1 className="text-3xl sm:text-5xl font-normal text-gray-900 mb-4">
           Built by Students.
         </h1>
         <p className="text-base sm:text-xl text-gray-500 font-light max-w-xl mx-auto">
           Explore projects built by clubs across campus
         </p>
       </div>
-
-      <div className="relative z-10 border-t border-gray-100 mb-10" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
         {loading ? (

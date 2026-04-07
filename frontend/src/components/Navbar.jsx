@@ -71,7 +71,6 @@ const Navbar = () => {
               { name: "Events", href: "/events" },
               { name: "Community", href: "/community" },
               { name: "Forms", href: "/forms" },
-              { name: "Testimonials", href: "/#testimonials", isAnchor: true },
               { name: "Projects", href: "/projects" },
             ].map((link) =>
               link.isAnchor ? (
@@ -93,22 +92,7 @@ const Navbar = () => {
               ),
             )}
 
-            {isAuthenticated && (
-              <>
-                <Link
-                  to="/inbox"
-                  className="text-sm font-medium text-gray-500 hover:text-black transition-colors"
-                >
-                  Inbox
-                </Link>
-                <Link
-                  to="/org-dashboard"
-                  className="text-sm font-semibold  text-gray-500 hover:text-indigo-800 transition-colors"
-                >
-                  Dashboard
-                </Link>
-              </>
-            )}
+            
           </div>
 
           {/* 3. Streamlined Auth Buttons */}
@@ -121,14 +105,6 @@ const Navbar = () => {
                 >
                   Profile
                 </Link>
-                <Button
-                  variant="secondary"
-                  to="/create"
-                  size="sm"
-                  className="px-4 py-2 text-xs"
-                >
-                  Create Form
-                </Button>
                 <Button
                   variant="primary"
                   size="sm"
