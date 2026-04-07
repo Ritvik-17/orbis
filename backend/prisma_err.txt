@@ -1,0 +1,110 @@
+﻿Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+node.exe : 
+At C:\Program 
+Files\nodejs\npx.ps1:29 
+char:3
++   & $NODE_EXE 
+$NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (:  
+  String) [], RemoteExc   
+ eption
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+Error: Prisma schema 
+validation - (validate 
+wasm)
+Error code: P1012
+[1;91merror[0m: 
+[1mError validating 
+field `postcomment` in 
+model `Post`: The 
+relation field 
+`postcomment` on model 
+`Post` is missing an 
+opposite relation field 
+on the model 
+`PostComment`. Either run 
+`prisma format` or add it 
+manually.[0m
+  [1;94m-->[0m  [4mpris
+ma\schema.prisma:448[0m
+[1;94m   | [0m
+[1;94m447 | [0m  
+reactions Reaction[]
+[1;94m448 | [0m  
+[1;91mpostcomment      
+PostComment[][0m
+[1;94m449 | [0m}
+[1;94m   | [0m
+[1;91merror[0m: 
+[1mError validating 
+field `post` in model 
+`Comment`: The relation 
+field `post` on model 
+`Comment` is missing an 
+opposite relation field 
+on the model `Post`. 
+Either run `prisma 
+format` or add it 
+manually.[0m
+  [1;94m-->[0m  [4mpris
+ma\schema.prisma:498[0m
+[1;94m   | [0m
+[1;94m497 | [0m
+[1;94m498 | [0m  
+[1;91mpost          Post 
+     @relation(fields: 
+[postId], references: 
+[id], onDelete: 
+Cascade)[0m
+[1;94m499 | [0m  user   
+       User      
+@relation(fields: 
+[userId], references: 
+[id], onDelete: Cascade)
+[1;94m   | [0m
+[1;91merror[0m: 
+[1mError validating 
+field `user` in model 
+`Comment`: The relation 
+field `user` on model 
+`Comment` is missing an 
+opposite relation field 
+on the model `User`. 
+Either run `prisma 
+format` or add it 
+manually.[0m
+  [1;94m-->[0m  [4mpris
+ma\schema.prisma:499[0m
+[1;94m   | [0m
+[1;94m498 | [0m  post   
+       Post      
+@relation(fields: 
+[postId], references: 
+[id], onDelete: Cascade)
+[1;94m499 | [0m  
+[1;91muser          User 
+     @relation(fields: 
+[userId], references: 
+[id], onDelete: 
+Cascade)[0m
+[1;94m500 | [0m  
+parentComment Comment?  @r
+elation("ThreadedComments"
+, fields: 
+[parentCommentId], 
+references: [id], 
+onDelete: Cascade)
+[1;94m   | [0m
+
+Validation Error Count: 3
+[Context: validate]
+
+Prisma CLI Version : 
+5.22.0
