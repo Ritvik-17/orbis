@@ -66,7 +66,7 @@ Orbis is a sophisticated event management platform designed to simplify and elev
 
 ## Database Schema
 
-![Orbis](https://github.com/user-attachments/assets/01384f1f-7fca-4ac9-9cc8-1f2c73f78cb2)
+[View Prisma Schema](./backend/prisma/schema.prisma)
 
 ## Tech Stack
 
