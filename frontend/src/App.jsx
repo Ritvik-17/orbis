@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { BrowserRouter } from 'react-router-dom';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
@@ -51,10 +50,8 @@ const ProtectedRoute = ({ children, requiredRole }) => {
 
 const App = () => {
   return (
-    <BrowserRouter basename='/orbis'>
-
-      <Router>
-        <NavigationProvider>
+    <Router basename='/orbis'>
+      <NavigationProvider>
         <Auth0Provider
           domain={import.meta.env.VITE_AUTH0_DOMAIN}
           clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
@@ -145,7 +142,6 @@ const App = () => {
         </Auth0Provider>
         </NavigationProvider>
       </Router>
-    </BrowserRouter>
   );
 };
 

@@ -67,11 +67,11 @@ const Navbar = () => {
           {/* 2 Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-x-8">
             {[
-              { name: "About", href: "/#about", isAnchor: true },
+              { name: "About", href: `${import.meta.env.BASE_URL}#about`, isAnchor: true },
               { name: "Events", href: "/events" },
               { name: "Community", href: "/community" },
               { name: "Forms", href: "/forms" },
-              { name: "Testimonials", href: "/#testimonials", isAnchor: true },
+              { name: "Testimonials", href: `${import.meta.env.BASE_URL}#testimonials`, isAnchor: true },
               { name: "Projects", href: "/projects" },
             ].map((link) =>
               link.isAnchor ? (

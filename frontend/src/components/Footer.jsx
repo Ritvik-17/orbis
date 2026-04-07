@@ -20,9 +20,9 @@ const Footer = () => (
         <div className="text-center sm:text-left">
           <div className="text-sm font-medium mb-4">Quick Links</div>
           <div className="space-y-2">
-            <a href="/#about" className="block text-sm text-gray-500 hover:text-black">About</a>
+            <a href={`${import.meta.env.BASE_URL}#about`} className="block text-sm text-gray-500 hover:text-black">About</a>
             <Link to="/events" className="block text-sm text-gray-500 hover:text-black">Events</Link>
-            <a href="/#testimonials" className="block text-sm text-gray-500 hover:text-black">Testimonials</a>
+            <a href={`${import.meta.env.BASE_URL}#testimonials`} className="block text-sm text-gray-500 hover:text-black">Testimonials</a>
           </div>
         </div>
 
