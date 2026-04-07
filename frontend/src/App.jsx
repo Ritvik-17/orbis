@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
@@ -50,98 +51,101 @@ const ProtectedRoute = ({ children, requiredRole }) => {
 
 const App = () => {
   return (
-    <Router>
-      <NavigationProvider>
-      <Auth0Provider
-        domain={import.meta.env.VITE_AUTH0_DOMAIN}
-        clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
-        authorizationParams={{
-          redirect_uri: import.meta.env.VITE_AUTH0_REDIRECT_URI || window.location.origin,
-          audience: import.meta.env.VITE_AUTH0_AUDIENCE,
-          scope: import.meta.env.VITE_AUTH0_SCOPE
-        }}
-        cacheLocation="localstorage"
-      >
-        <AuthProvider>
-          <ChatProvider>
-            <div className="App min-h-screen flex flex-col">
-              <Navbar />
-            <main className="flex-grow">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/events" element={<Events />} />
-                <Route path="/community" element={<Community />} />
-                <Route 
-                  path="/inbox" 
-                  element={
-                    <ProtectedRoute>
-                      <Inbox />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/create-event" 
-                  element={
-                    <ProtectedRoute requiredRole="ORGANIZER">
-                      <CreateEvent />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route path="/events/:id" element={<EventDetails />} />
-                <Route 
-                  path="/edit-event/:id" 
-                  element={
-                    <ProtectedRoute requiredRole="ORGANIZER">
-                      <EditEvent />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/profile" 
-                  element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/profile/:id" 
-                  element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/edit-profile" 
-                  element={
-                    <ProtectedRoute>
-                      <Profile initialEditMode={true} />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route path="/events/:id/apply" element={<ApplyForm />} />  {/* NEW ROUTE */}
-                <Route path="/org-dashboard" element={<OrganiserDashboard />} />
-                <Route path="/event-dashboard/:id" element={<EventDashboard />} />
-                <Route path="/projects" element={<ProjectShowcase />} />
-                <Route path="/projects/:id" element={<ClubProjects />} />
-                {/* Routes for forms */}
-                
-                <Route path="/forms" element={<Forms/>} />
-                <Route path="/create" element={<CreateForm />} />
-                <Route path="/forms/:id" element={<FormView />} />
-                <Route path="/responses/:formId" element={<Responses />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
-          </ChatProvider>
-        </AuthProvider>
-      </Auth0Provider>
-      </NavigationProvider>
-    </Router>
+    <BrowserRouter basename='/orbis'>
+
+      <Router>
+        <NavigationProvider>
+        <Auth0Provider
+          domain={import.meta.env.VITE_AUTH0_DOMAIN}
+          clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
+          authorizationParams={{
+            redirect_uri: import.meta.env.VITE_AUTH0_REDIRECT_URI || window.location.origin,
+            audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+            scope: import.meta.env.VITE_AUTH0_SCOPE
+          }}
+          cacheLocation="localstorage"
+        >
+          <AuthProvider>
+            <ChatProvider>
+              <div className="App min-h-screen flex flex-col">
+                <Navbar />
+              <main className="flex-grow">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/events" element={<Events />} />
+                  <Route path="/community" element={<Community />} />
+                  <Route 
+                    path="/inbox" 
+                    element={
+                      <ProtectedRoute>
+                        <Inbox />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/create-event" 
+                    element={
+                      <ProtectedRoute requiredRole="ORGANIZER">
+                        <CreateEvent />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route path="/events/:id" element={<EventDetails />} />
+                  <Route 
+                    path="/edit-event/:id" 
+                    element={
+                      <ProtectedRoute requiredRole="ORGANIZER">
+                        <EditEvent />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/profile" 
+                    element={
+                      <ProtectedRoute>
+                        <Profile />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/profile/:id" 
+                    element={
+                      <ProtectedRoute>
+                        <Profile />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/edit-profile" 
+                    element={
+                      <ProtectedRoute>
+                        <Profile initialEditMode={true} />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route path="/events/:id/apply" element={<ApplyForm />} />  {/* NEW ROUTE */}
+                  <Route path="/org-dashboard" element={<OrganiserDashboard />} />
+                  <Route path="/event-dashboard/:id" element={<EventDashboard />} />
+                  <Route path="/projects" element={<ProjectShowcase />} />
+                  <Route path="/projects/:id" element={<ClubProjects />} />
+                  {/* Routes for forms */}
+                  
+                  <Route path="/forms" element={<Forms/>} />
+                  <Route path="/create" element={<CreateForm />} />
+                  <Route path="/forms/:id" element={<FormView />} />
+                  <Route path="/responses/:formId" element={<Responses />} />
+                </Routes>
+              </main>
+              <Footer />
+            </div>
+            </ChatProvider>
+          </AuthProvider>
+        </Auth0Provider>
+        </NavigationProvider>
+      </Router>
+    </BrowserRouter>
   );
 };
 
