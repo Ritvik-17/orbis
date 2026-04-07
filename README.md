@@ -6,7 +6,6 @@ Orbis is a sophisticated event management platform designed to simplify and elev
 
 ## Table of contents
 
-<details>
 - [The Problem](#the-problem)
 - [Our solution](#our-solution)
 - [Features](#features)
@@ -15,10 +14,9 @@ Orbis is a sophisticated event management platform designed to simplify and elev
   - [Community module](#community-module)
   - [Project showcase](#project-showcase)
   - [Form creation](#form-creation)
-- [Setup and development guidelines](#setup--development-guidelines)
+- [Setup and Development Guidelines](#setup-and-development-guidelines)
 - [Deployment](#deployment)
 - [Team Members](#team-members)
-</details>
 
 ## The Problem
 
@@ -78,7 +76,7 @@ Orbis is a sophisticated event management platform designed to simplify and elev
 - **ORM**: Prisma
 - **Authentication**: Auth0
 
-## Setup & Development Guidelines
+## Setup and Development Guidelines
 
 ### Prerequisites
 
