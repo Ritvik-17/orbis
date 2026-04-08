@@ -161,7 +161,7 @@ const Navbar = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMobileMenu}
-            className="md:hidden z-20 p-2 focus:outline-none"
+            className="mobile-menu-button md:hidden z-30 p-2 focus:outline-none"
           >
             <div className="space-y-1.5">
               <div
@@ -176,14 +176,101 @@ const Navbar = () => {
             </div>
           </button>
 
-          {/* Mobile Menu Overlay */}
+          {/* Mobile Menu Dropdown */}
           <div
-            className={`fixed inset-0 bg-white z-10 transition-transform duration-500 ease-in-out md:hidden ${
-              mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+            className={`mobile-menu-container absolute top-full left-0 right-0 bg-white shadow-2xl border-t border-gray-100 rounded-b-3xl transition-all duration-300 ease-in-out md:hidden overflow-hidden ${
+              mobileMenuOpen ? "max-h-[85vh] opacity-100 py-6" : "max-h-0 opacity-0 py-0 pointer-events-none"
             }`}
           >
-            <div className="flex flex-col justify-center items-center h-full space-y-8 text-center">
-              {/* Mobile links go here... */}
+            <div className="flex flex-col justify-start items-center space-y-5 text-center overflow-y-auto px-6 h-full" style={{ maxHeight: 'calc(85vh - 3rem)' }}>
+              {[
+                { name: "About", href: `${import.meta.env.BASE_URL}#about`, isAnchor: true },
+                { name: "Events", href: "/events" },
+                { name: "Community", href: "/community" },
+                { name: "Forms", href: "/forms" },
+                { name: "Testimonials", href: `${import.meta.env.BASE_URL}#testimonials`, isAnchor: true },
+                { name: "Projects", href: "/projects" },
+              ].map((link) =>
+                link.isAnchor ? (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => handleMobileMenuClick()}
+                    className="text-xl font-medium text-gray-800 hover:text-black transition-colors"
+                  >
+                    {link.name}
+                  </a>
+                ) : (
+                  <Link
+                    key={link.name}
+                    to={link.href}
+                    onClick={() => handleMobileMenuClick()}
+                    className="text-xl font-medium text-gray-800 hover:text-black transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                ),
+              )}
+              
+              {isAuthenticated && (
+                <>
+                  <Link
+                    to="/inbox"
+                    onClick={() => handleMobileMenuClick()}
+                    className="text-xl font-medium text-gray-800 hover:text-black transition-colors"
+                  >
+                    Inbox
+                  </Link>
+                  <Link
+                    to="/org-dashboard"
+                    onClick={() => handleMobileMenuClick()}
+                    className="text-xl font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    to="/profile"
+                    onClick={() => handleMobileMenuClick()}
+                    className="text-xl font-medium text-gray-800 hover:text-black"
+                  >
+                    Profile
+                  </Link>
+                  <Button
+                    variant="secondary"
+                    to="/create"
+                    onClick={() => handleMobileMenuClick()}
+                    className="w-[200px] justify-center mt-2"
+                  >
+                    Create Form
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => handleMobileMenuClick(logout)}
+                    className="w-[200px] justify-center mt-2"
+                  >
+                    Logout
+                  </Button>
+                </>
+              )}
+              
+              {!isAuthenticated && (
+                <div className="flex flex-col gap-3 mt-4 w-[200px] pb-4">
+                  <Button
+                    variant="secondary"
+                    onClick={() => handleMobileMenuClick(login)}
+                    className="justify-center"
+                  >
+                    Login
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => handleMobileMenuClick(() => login({ screen_hint: "signup" }))}
+                    className="justify-center"
+                  >
+                    Register
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>

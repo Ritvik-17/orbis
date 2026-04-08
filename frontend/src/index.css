@@ -29,6 +29,12 @@ body {
   padding: 0 2rem;
 }
 
+@media (max-width: 768px) {
+  .container-width {
+    padding: 0 1rem;
+  }
+}
+
 .btn-primary {
   @apply px-6 py-3 bg-black text-white rounded-full hover:bg-gray-800 transition-colors font-medium;
   font-family: 'Poppins', sans-serif;
