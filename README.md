@@ -24,11 +24,11 @@ Orbis is a sophisticated event management platform designed to simplify and elev
 
 ## Our Solution
 
-- Orbis provides a centralized platform that streamlines event discovery, registration, and management. Instead of relying on scattered WhatsApp messages and multiple external links, all event-related information—including details, deadlines, and application forms—is organized in one place.
+- Orbis provides a centralized platform that streamlines event discovery, registration, and management. Instead of relying on scattered WhatsApp messages and multiple external links, all event related information, including details, deadlines, and application forms is organized in one place.
 
 - Enables organizers to create and manage events, handle applications, track participants and maintain structured workflows. For participants, it simplifies discovering events, applying individually or in teams, and monitoring application status in real time.
 
-- Beyond events, Orbis introduces a community-driven ecosystem, allowing users to interact through posts, comments, friend connections, and private messaging—fostering stronger campus engagement within a single platform.
+- Beyond events, Orbis introduces a community-driven ecosystem, allowing users to interact through posts, comments, friend connections, and private messaging fostering stronger campus engagement within a single platform.
 
 - It also serves as a dedicated project showcase, where clubs can present their work, making projects more accessible across the institute.
 
