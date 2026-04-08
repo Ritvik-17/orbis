@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../helpers/supabase";
 import { useEffect, useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Forms = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [forms, setForms] = useState([]);
 
   useEffect(() => {
@@ -12,9 +14,13 @@ const Forms = () => {
 
   const fetchForms = async () => {
     // Fetch form
-    const { data: formdata } = await supabase.from("forms").select("*");
+    const { data: formdata, error } = await supabase.from("forms").select("*");
 
-    setForms(formdata);
+    if (error) {
+      console.error("Error fetching forms:", error.message);
+    }
+    // Prevent setting to null to avoid `.map` crashes
+    setForms(formdata || []);
   };
   return (
     <div
@@ -35,7 +41,7 @@ const Forms = () => {
           gap: "20px",
         }}
       >
-        {forms.map((form) => (
+        {forms?.map((form) => (
           <div
             key={form.id}
             style={{
@@ -75,37 +81,41 @@ const Forms = () => {
             </div>
 
             <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
-              {/* User Side Button */}
-              {/* <button
-                onClick={() => navigate(`/view-form/${form.id}`)}
-                style={{
-                  flex: 1,
-                  padding: "10px",
-                  backgroundColor: "#007bff",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                }}
-              >
-                Fill Form
-              </button> */}
+              {/* User Side Button: Fill Form */}
+              {form.created_by !== (user?.auth0Id || user?.sub || user?.id) && (
+                <button
+                  onClick={() => navigate(`/forms/${form.id}`)}
+                  style={{
+                    flex: 1,
+                    padding: "10px",
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Fill Form
+                </button>
+              )}
 
-              {/* Admin Side Button */}
-              <button
-                onClick={() => navigate(`/responses/${form.id}`)}
-                style={{
-                  flex: 1,
-                  padding: "10px",
-                  backgroundColor: "#6c757d",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                }}
-              >
-                Check Responses
-              </button>
+              {/* Admin Side Button: Check Responses */}
+              {form.created_by === (user?.auth0Id || user?.sub || user?.id) && (
+                <button
+                  onClick={() => navigate(`/responses/${form.id}`)}
+                  style={{
+                    flex: 1,
+                    padding: "10px",
+                    backgroundColor: "#6c757d",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Check Responses
+                </button>
+              )}
             </div>
           </div>
         ))}

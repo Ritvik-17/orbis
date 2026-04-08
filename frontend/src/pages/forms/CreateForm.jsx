@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { supabase } from "../../helpers/supabase";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function CreateForm() {
+  const { user } = useAuth();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [questions, setQuestions] = useState([
@@ -42,9 +44,10 @@ export default function CreateForm() {
     setLoading(true);
 
     // 1️⃣ Insert form
+    const createdBy = user?.auth0Id || user?.sub || user?.id || null;
     const { data: formData, error: formError } = await supabase
       .from("forms")
-      .insert([{ title, description }])
+      .insert([{ title, description, created_by: createdBy }])
       .select();
 
     if (formError) {
