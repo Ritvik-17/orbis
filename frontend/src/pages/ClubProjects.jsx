@@ -15,38 +15,6 @@ import {
 import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 
-const GridBackground = () => (
-  <div className="fixed inset-0 pointer-events-none">
-    <div
-      className="absolute inset-0"
-      style={{
-        backgroundImage: `
-          linear-gradient(to right, rgba(0,0,0,0.03) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(0,0,0,0.03) 1px, transparent 1px)
-        `,
-        backgroundSize: "40px 40px",
-      }}
-    />
-    <div
-      className="absolute inset-0"
-      style={{
-        backgroundImage: `
-          linear-gradient(to right, rgba(0,0,0,0.07) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(0,0,0,0.07) 1px, transparent 1px)
-        `,
-        backgroundSize: "200px 200px",
-      }}
-    />
-    <div
-      className="absolute inset-0"
-      style={{
-        background:
-          "radial-gradient(circle at 50% 50%, transparent 0%, rgba(255,255,255,0.7) 100%)",
-      }}
-    />
-  </div>
-);
-
 const AddProjectModal = ({ onClose, onAdd, getAccessToken, clubId }) => {
   const [form, setForm] = useState({
     title: "",
@@ -642,13 +610,11 @@ const ClubProjects = () => {
 
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
-      <GridBackground />
-
       {/* Header */}
-      <div className="relative z-10 border-b border-gray-100 bg-white/80 backdrop-blur-sm">
+      <div className="relative bg-white/80 backdrop-blur-sm">
         <div className="mt-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-4 min-w-0">
+          <div className="flex items-center justify-between gap-4 mt-10">
+            <div className="flex items-center gap-4 min-w-0 ">
               <div className="w-14 h-14 rounded-2xl bg-black flex items-center justify-center flex-shrink-0">
                 <span className="text-white font-light text-2xl">
                   {club?.name?.[0] || "?"}

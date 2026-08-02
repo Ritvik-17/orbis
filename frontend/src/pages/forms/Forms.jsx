@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../helpers/supabase";
 import { useEffect, useState } from "react";
+import Button from "../../components/Button";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Forms = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [forms, setForms] = useState([]);
 
   useEffect(() => {
@@ -25,7 +28,27 @@ const Forms = () => {
         paddingTop: "60px",
       }}
     >
-      <h1 style={{ marginBottom: "24px" }}>All Available Forms</h1>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "24px",
+          marginTop: "10px"
+        }}
+      >
+        <h1>All Available Forms</h1>
+
+        {isAuthenticated && (
+          <Button
+            variant="secondary"
+            to="/create"
+            className="px-4 py-2 text-xs"
+          >
+            Create Form
+          </Button>
+        )}
+      </div>
 
       {/* Grid Layout for Forms */}
       <div
@@ -52,7 +75,7 @@ const Forms = () => {
               <h2 style={{ margin: "0 0 10px 0", fontSize: "1.25rem" }}>
                 {form.title}
               </h2>
-              <div className="flex items-" >
+              <div className="flex items-">
                 <p
                   style={{
                     color: "#666",
