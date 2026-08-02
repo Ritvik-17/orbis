@@ -8,7 +8,7 @@ const prisma = new PrismaClient({
     }
   },
   // Add log level for debugging
-  log: ['query', 'info', 'warn', 'error']
+  // log: ['query', 'info', 'warn', 'error']
 });
 
 // Alternative connection method with retry logic

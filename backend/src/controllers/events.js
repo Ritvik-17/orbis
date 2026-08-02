@@ -27,10 +27,10 @@ export const createEvent = async (req, res) => {
       });
     }
 
-    console.log('Full eventData:', JSON.stringify(eventData, null, 2));
-    console.log('Event Branding Data:', JSON.stringify(eventData.eventBranding, null, 2));
-    console.log('Logo Image Public URL:', eventData.eventBranding?.logoImage?.publicUrl);
-    console.log('Cover Image Public URL:', eventData.eventBranding?.coverImage?.publicUrl);
+    // console.log('Full eventData:', JSON.stringify(eventData, null, 2));
+    // console.log('Event Branding Data:', JSON.stringify(eventData.eventBranding, null, 2));
+    // console.log('Logo Image Public URL:', eventData.eventBranding?.logoImage?.publicUrl);
+    // console.log('Cover Image Public URL:', eventData.eventBranding?.coverImage?.publicUrl);
 
     const event = await prisma.event.create({
       data: {

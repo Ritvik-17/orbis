@@ -46,8 +46,8 @@ export default function FormView() {
       .insert([{ form_id: id }])
       .select();
 
-    console.log(submissionData);
-    console.log(submissionError);
+    // console.log(submissionData);
+    // console.log(submissionError);
     if (submissionError) {
       alert("Error creating submission");
       return;

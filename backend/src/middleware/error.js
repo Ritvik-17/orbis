@@ -1,5 +1,5 @@
 const errorHandler = (err, req, res, next) => {
-  console.error(err.stack);
+  // console.error(err.stack);
 
   if (err.name === 'PrismaClientKnownRequestError') {
     return res.status(400).json({

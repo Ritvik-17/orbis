@@ -73,7 +73,7 @@ export const register = async (req, res) => {
 
 export const getCurrentUser = async (req, res) => {
   try {
-    console.log(req.auth.payload.sub);
+    // console.log(req.auth.payload.sub);
     const user = await prisma.user.findUnique({
       where: { auth0Id: req.auth.payload.sub },
       include: {
@@ -84,7 +84,7 @@ export const getCurrentUser = async (req, res) => {
         socialProfiles: true
       }
     });
-    console.log(user)
+    // console.log(user)
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });

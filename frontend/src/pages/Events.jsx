@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useAuth } from '../contexts/AuthContext';
-import Button from '../components/Button';
-import { EditBtn } from '../svg/EditBtn';
-import { DeleteBtn } from '../svg/DeleteBtn';
-import AlertDialog from '../components/AlertDialog';
-import { deleteImage } from '../helpers/images';
-import {useAuth0} from "@auth0/auth0-react";
-import { toast } from 'react-hot-toast';
-
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from "../contexts/AuthContext";
+import Button from "../components/Button";
+import { EditBtn } from "../svg/EditBtn";
+import { DeleteBtn } from "../svg/DeleteBtn";
+import AlertDialog from "../components/AlertDialog";
+import { deleteImage } from "../helpers/images";
+import { useAuth0 } from "@auth0/auth0-react";
+import { toast } from "react-hot-toast";
 
 const Events = () => {
   const [events, setEvents] = useState([]);
@@ -18,17 +17,15 @@ const Events = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [applicationResponses, setApplicationResponses] = useState({});
   const navigate = useNavigate();
-  const canCreateEvent = user?.role === 'ADMIN' || user?.role === 'ORGANIZER';
-  const [searchWord, setSearchWord] = useState('');
+  const canCreateEvent = user?.role === "ADMIN" || user?.role === "ORGANIZER";
+  const [searchWord, setSearchWord] = useState("");
   const [selected, setSelected] = useState("All");
   const [drafts, setDrafts] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-
-  
+  const [error, setError] = useState("");
+  const isCreatedView = selected === "Created Events";
 
   useEffect(() => {
     fetchEvents();
@@ -39,38 +36,50 @@ const Events = () => {
       setLoading(true);
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/events`,
-        { withCredentials: true }
+        { withCredentials: true },
       );
       const eventList = response.data;
-      const draftedEvents = eventList.filter(event => event.status === 'DRAFT');
-      const completeEvents = eventList.filter(event => event.status === 'PUBLISHED');
+      const draftedEvents = eventList.filter(
+        (event) => event.status === "DRAFT",
+      );
+      const completeEvents = eventList.filter(
+        (event) => event.status === "PUBLISHED",
+      );
       setDrafts(draftedEvents);
-      
-      if(searchWord !== '') {
-        const searchedEventList = eventList.filter(event => 
-          event.name.toLowerCase().includes(searchWord.toLowerCase())
+
+      if (searchWord !== "") {
+        const searchedEventList = eventList.filter((event) =>
+          event.name.toLowerCase().includes(searchWord.toLowerCase()),
         );
         setEvents(searchedEventList);
       } else {
-        if(selected === 'Hackathons') {
-          const hackathons = completeEvents.filter(event => event.type === 'HACKATHON');
+        if (selected === "Hackathons") {
+          const hackathons = completeEvents.filter(
+            (event) => event.type === "HACKATHON",
+          );
           setEvents(hackathons);
-        } else if(selected === 'General Events') {
-          const generalEvents = completeEvents.filter(event => event.type === 'GENERAL_EVENT');
+        } else if (selected === "General Events") {
+          const generalEvents = completeEvents.filter(
+            (event) => event.type === "GENERAL_EVENT",
+          );
           setEvents(generalEvents);
-        } else if(selected === 'Created Events') {
-          const createdEvents = completeEvents.filter(event => event.createdById === user.id);
+        } else if (selected === "Created Events") {
+          const createdEvents = completeEvents.filter(
+            (event) => event.createdById === user.id,
+          );
           setEvents(createdEvents);
-        } else if(selected === 'Drafts') {
-          const myDrafts = drafts.filter(draft => draft.createdById === user.id);
+        } else if (selected === "Drafts") {
+          const myDrafts = drafts.filter(
+            (draft) => draft.createdById === user.id,
+          );
           setEvents(myDrafts);
         } else {
           setEvents(completeEvents);
         }
       }
     } catch (err) {
-      console.error('Error fetching events:', err);
-      setError('Failed to load events');
+      console.error("Error fetching events:", err);
+      setError("Failed to load events");
     } finally {
       setLoading(false);
     }
@@ -78,36 +87,37 @@ const Events = () => {
 
   const handleJoinEvent = async (eventId) => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/events/${eventId}/join`, 
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/events/${eventId}/join`,
         { applicationDetails: applicationResponses[eventId] },
-        { withCredentials: true }
+        { withCredentials: true },
       );
-      console.log('Joined event:', response.data);
+      console.log("Joined event:", response.data);
       setSelectedEvent(null);
       setApplicationResponses({});
       fetchEvents(); // Refresh the events list
     } catch (error) {
-      console.error('Error joining event:', error);
+      console.error("Error joining event:", error);
     }
   };
 
   const handleApplicationChange = (eventId, questionIndex, value) => {
-    setApplicationResponses(prev => ({
+    setApplicationResponses((prev) => ({
       ...prev,
       [eventId]: {
         ...prev[eventId],
-        [questionIndex]: value
-      }
+        [questionIndex]: value,
+      },
     }));
   };
 
   const handleEventViewClick = (id) => {
     navigate(`/events/${id}`);
-  }
+  };
 
   const handleEventEditClick = (id) => {
     navigate(`/edit-event/${id}`);
-  }
+  };
 
   const handleDeleteClick = (event) => {
     setEventToDelete(event);
@@ -118,14 +128,14 @@ const Events = () => {
     try {
       const token = await getAccessToken();
       await axios.delete(
-        `${import.meta.env.VITE_API_URL}/api/events/${eventToDelete.id}`, 
+        `${import.meta.env.VITE_API_URL}/api/events/${eventToDelete.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
-          withCredentials: true
-        }
+          withCredentials: true,
+        },
       );
 
       // Delete associated images if they exist
@@ -135,16 +145,16 @@ const Events = () => {
       if (eventToDelete.branding?.coverUrl) {
         await deleteImage(eventToDelete.branding.coverUrl);
       }
-      
+
       fetchEvents(); // Refresh the events list
       setIsDialogOpen(false);
       setEventToDelete(null);
       // Add success toast notification
-      toast.success('Event deleted successfully');
+      toast.success("Event deleted successfully");
     } catch (error) {
-      console.error('Error deleting event:', error);
+      console.error("Error deleting event:", error);
       // Add error toast notification
-      toast.error('Failed to delete event. Please try again.');
+      toast.error("Failed to delete event. Please try again.");
     }
   };
 
@@ -152,12 +162,12 @@ const Events = () => {
     try {
       await axios.put(
         `${import.meta.env.VITE_API_URL}/api/events/${eventId}`,
-        { status: 'PUBLISHED' },
-        { withCredentials: true }
+        { status: "PUBLISHED" },
+        { withCredentials: true },
       );
       fetchEvents(); // Refresh the events list
     } catch (error) {
-      console.error('Error publishing event:', error);
+      console.error("Error publishing event:", error);
     }
   };
 
@@ -209,7 +219,7 @@ const Events = () => {
             Created Events
           </button>
         )}
-        
+
         {!!drafts.length && (
           <button
             onClick={() => setSelected("Drafts")}
@@ -248,6 +258,15 @@ const Events = () => {
     <div className="container mx-auto px-4 pt-32 pb-16">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Events</h1>
+
+        {canCreateEvent && (
+          <Button
+            onClick={() => navigate("/create-event")}
+            className="text-sm px-4 py-2"
+          >
+            Create Event
+          </Button>
+        )}
       </div>
 
       <SegmentedControl />
@@ -270,19 +289,36 @@ const Events = () => {
                 />
               )}
               <div className="p-4">
-                <h2 className="text-xl font-semibold mb-2">{event.name}</h2>
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-semibold mb-2">{event.name}</h2>
+
+                  {isCreatedView && (
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/event-dashboard/${event.id}`);
+                      }}
+                    >
+                      Go to Dashboard
+                    </Button>
+                  )}
+                </div>
                 <p className="text-gray-600 mb-2">{event.tagline}</p>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-500">
                     {new Date(event.timeline.eventStart).toLocaleDateString()}
                   </span>
                   <div className="flex items-center gap-2">
-                    <span className={`px-2 py-1 rounded text-sm ${
-                      event.status === 'DRAFT' ? 'bg-gray-100' : 'bg-green-100'
-                    }`}>
+                    <span
+                      className={`px-2 py-1 rounded text-sm ${
+                        event.status === "DRAFT"
+                          ? "bg-gray-100"
+                          : "bg-green-100"
+                      }`}
+                    >
                       {event.status}
                     </span>
-                    {event.createdById === user?.id && (
+                    {isCreatedView && event.createdById === user?.id && (
                       <>
                         <button
                           onClick={(e) => {
